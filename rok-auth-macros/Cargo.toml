@@ -1,0 +1,19 @@
+[package]
+name = "rok-auth-macros"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+homepage.workspace = true
+description = "Procedural macros for rok-auth"
+keywords = ["auth", "macro", "axum", "rbac", "rok"]
+categories = ["authentication", "web-programming"]
+
+[lib]
+proc-macro = true
+
+[dependencies]
+syn.workspace = true
+quote.workspace = true
+proc-macro2.workspace = true

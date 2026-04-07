@@ -1,0 +1,33 @@
+[workspace]
+resolver = "2"
+members = [
+    "rok-auth",
+    "rok-auth-macros",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+authors = ["Rok Authors"]
+repository = "https://github.com/rok/rok-auth"
+homepage = "https://github.com/rok/rok-auth"
+
+[workspace.dependencies]
+anyhow = "1.0"
+thiserror = "1.0"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+jsonwebtoken = "9.2"
+argon2 = "0.5"
+rand = "0.8"
+uuid = { version = "1.0", features = ["v4", "serde"] }
+chrono = { version = "0.4", features = ["serde"] }
+tokio = { version = "1.0", features = ["full"] }
+sqlx = { version = "0.7", features = ["postgres", "runtime-tokio"] }
+axum = "0.8"
+tower = "0.5"
+tower-http = { version = "0.6", features = ["cors"] }
+syn = "2.0"
+quote = "1.0"
+proc-macro2 = "1.0"
