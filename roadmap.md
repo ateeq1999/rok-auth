@@ -21,64 +21,54 @@ rok-auth is a production-ready authentication library that provides:
 All code lives under `rok-auth/src/` with the following structure:
 
 ```
-rok-auth/
-├── src/
-│   ├── lib.rs              # Main entry point
-│   ├── claims.rs           # JWT claims
-│   ├── config.rs           # Configuration
-│   ├── error.rs            # Error types
-│   ├── jwt.rs              # JWT operations
-│   ├── password/
-│   │   ├── mod.rs
-│   │   └── hash.rs
-│   ├── session/
-│   │   ├── mod.rs
-│   │   └── token.rs
-│   ├── tokens/
-│   │   ├── mod.rs
-│   │   ├── pair.rs
-│   │   └── refresh.rs
-│   ├── providers/
-│   │   ├── mod.rs
-│   │   └── trait_.rs
-│   ├── web/
-│   │   ├── mod.rs
-│   │   └── axum/
-│   │       ├── mod.rs
-│   │       ├── layer.rs
-│   │       ├── extractor.rs
-│   │       ├── guard.rs
-│   │       └── error.rs
-│   └── services/
-│       ├── mod.rs
-│       ├── session.rs
-│       ├── oauth.rs
-│       ├── totp.rs
-│       ├── email/
-│       │   ├── mod.rs
-│       │   ├── verification.rs
-│       │   └── templates.rs
-│       └── authorization/
-│           ├── mod.rs
-│           ├── roles.rs
-│           └── permissions.rs
-├── rok-auth-macros/
-│   └── src/
-│       ├── lib.rs
-│       └── derive/
-│           └── provider.rs
-└── docs/
-    ├── phase-01-core-authentication.md
-    ├── phase-02-user-authentication.md
-    ├── phase-03-two-factor-auth.md
-    ├── phase-04-oauth-integration.md
-    ├── phase-05-email-verification.md
-    ├── phase-06-rbac-advanced.md
-    ├── phase-07-api-polish.md
-    ├── phase-08-rate-limiting-security.md
-    ├── phase-09-cli-commands.md
-    ├── commands.md
-    └── progress.md
+src/
+├── main.rs              # Binary entry (CLI)
+├── lib.rs               # Library entry point
+├── claims.rs            # JWT claims
+├── config.rs            # Configuration
+├── error.rs             # Error types
+├── jwt.rs               # JWT operations
+├── macros/              # Procedural macros
+│   └── lib.rs
+├── password/
+│   ├── mod.rs
+│   └── hash.rs
+├── providers/
+│   ├── mod.rs
+│   └── trait_.rs
+├── services/
+│   ├── mod.rs
+│   ├── oauth.rs
+│   ├── session.rs
+│   └── totp.rs          # (Phase 3)
+├── session/
+│   ├── mod.rs
+│   └── token.rs
+├── tokens/
+│   ├── mod.rs
+│   ├── pair.rs
+│   └── refresh.rs
+└── web/
+    ├── mod.rs
+    └── axum/
+        ├── mod.rs
+        ├── layer.rs
+        ├── extractor.rs
+        ├── guard.rs
+        └── error.rs
+
+docs/
+├── phase-01-core-authentication.md
+├── phase-02-user-authentication.md
+├── phase-03-two-factor-auth.md
+├── phase-04-oauth-integration.md
+├── phase-05-email-verification.md
+├── phase-06-rbac-advanced.md
+├── phase-07-api-polish.md
+├── phase-08-rate-limiting-security.md
+├── phase-09-cli-commands.md
+├── commands.md
+└── progress.md
 ```
 
 ### Code Style Guidelines
@@ -136,9 +126,9 @@ cargo check --all-features
 
 | Phase | Title | Status | Dependencies |
 |-------|-------|--------|--------------|
-| 1 | Core Authentication Foundation | Not Started | None |
-| 2 | User Authentication Flows | Not Started | Phase 1 |
-| 3 | Two-Factor Authentication (TOTP) | Not Started | Phase 2 |
+| 1 | Core Authentication Foundation | Completed | None |
+| 2 | User Authentication Flows | Completed | Phase 1 |
+| 3 | Two-Factor Authentication (TOTP) | Completed | Phase 2 |
 | 4 | OAuth Integration | Not Started | Phase 2 |
 | 5 | Email Verification & Account Recovery | Not Started | Phase 2 |
 | 6 | Advanced RBAC & Authorization | Not Started | Phase 1, 2 |
