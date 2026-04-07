@@ -53,6 +53,7 @@
 //! | [`web`] | Web framework integrations |
 //! | [`services`] | Built-in authentication services |
 
+pub mod authorization;
 pub mod claims;
 pub mod config;
 pub mod error;

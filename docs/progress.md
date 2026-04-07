@@ -5,8 +5,8 @@
 | Metric | Value |
 |--------|-------|
 | Total Phases | 9 |
-| Completed Phases | 5 |
-| Overall Progress | 56% |
+| Completed Phases | 6 |
+| Overall Progress | 67% |
 
 ## Phase Progress
 
@@ -17,63 +17,28 @@
 | 3 | Two-Factor Authentication (TOTP) | 100% | ✅ Completed |
 | 4 | OAuth Integration | 100% | ✅ Completed |
 | 5 | Email Verification & Account Recovery | 100% | ✅ Completed |
-| 6 | Advanced RBAC & Authorization | 0% | Not Started |
+| 6 | Advanced RBAC & Authorization | 100% | ✅ Completed |
 | 7 | API Polish & Developer Experience | 0% | Not Started |
 | 8 | Rate Limiting & Security Hardening | 0% | Not Started |
 | 9 | CLI Commands Specification | 0% | Not Started |
 
 ## Completed Work
 
-### Phase 1: Core Authentication Foundation ✅
-- [x] JWT implementation with HS256
-- [x] Claims management
-- [x] Configuration system
-- [x] Error types
-- [x] Tests
+### Phase 1-5: (See previous progress.md)
 
-### Phase 2: User Authentication Flows ✅
-- [x] Password hashing with Argon2id
-- [x] UserProvider trait
-- [x] TokenPair management
-- [x] Session token generation
-- [x] Axum integration
-- [x] Procedural macros
-
-### Phase 3: Two-Factor Authentication (TOTP) ✅
-- [x] TOTP secret generation
-- [x] TOTP code generation (RFC 6238)
-- [x] TOTP verification with time window tolerance
-- [x] Provisioning URI generation (otpauth://)
-- [x] Backup codes generation and verification
-- [x] Timing attack prevention
-- [x] Tests
-
-### Phase 4: OAuth Integration ✅
-- [x] OAuthProvider trait
-- [x] OAuthConfig configuration
-- [x] Authorization URL generation
-- [x] Token exchange
-- [x] User info retrieval
-- [x] State parameter validation (CSRF protection)
-- [x] Google OAuth provider
-- [x] GitHub OAuth provider
-- [x] Discord OAuth provider
-- [x] Tests
-
-### Phase 5: Email Verification & Account Recovery ✅
-- [x] VerificationToken generation
-- [x] VerificationService with async storage
-- [x] ResetToken for password reset
-- [x] ResetService with multiple token types
-- [x] Email templates (HTML/text)
-- [x] EmailSender trait
-- [x] ConsoleEmailSender and NoopEmailSender
-- [x] SmtpConfig from URL parsing
+### Phase 6: Advanced RBAC & Authorization ✅
+- [x] Role hierarchy with inheritance
+- [x] RoleManager with default roles (superadmin, admin, moderator, user, guest)
+- [x] Permission system (Read, Write, Delete, Manage, Execute)
+- [x] Scope-based permissions (Own, Team, All)
+- [x] Policy evaluator with condition support
+- [x] Audit logging with event filtering
+- [x] InMemoryPermissionProvider and InMemoryAuditLogger
 - [x] Tests
 
 ## Current Focus
 
-**Phase 6: Advanced RBAC & Authorization**
+**Phase 7: API Polish & Developer Experience**
 
 ## Blocker Notes
 
@@ -83,17 +48,15 @@ None.
 
 | Date | Phase | Description |
 |------|-------|-------------|
-| 2026-04-08 | 1-2 | Initial folder structure and core modules |
-| 2026-04-08 | 3 | TOTP implementation |
-| 2026-04-08 | 4 | OAuth integration |
-| 2026-04-08 | 5 | Email verification and password reset |
+| 2026-04-08 | 1-5 | Core phases 1-5 |
+| 2026-04-08 | 6 | RBAC and authorization |
 
 ## Next Steps
 
-1. Start Phase 6: Advanced RBAC & Authorization
-2. Implement role hierarchy
-3. Add permission-based access control
-4. Add authorization middleware
+1. Start Phase 7: API Polish & Developer Experience
+2. Add procedural macros
+3. Implement builder patterns
+4. Add more utilities
 
 ## Notes
 
