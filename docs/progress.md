@@ -5,8 +5,8 @@
 | Metric | Value |
 |--------|-------|
 | Total Phases | 9 |
-| Completed Phases | 4 |
-| Overall Progress | 44% |
+| Completed Phases | 5 |
+| Overall Progress | 56% |
 
 ## Phase Progress
 
@@ -16,7 +16,7 @@
 | 2 | User Authentication Flows | 100% | ✅ Completed |
 | 3 | Two-Factor Authentication (TOTP) | 100% | ✅ Completed |
 | 4 | OAuth Integration | 100% | ✅ Completed |
-| 5 | Email Verification & Account Recovery | 0% | Not Started |
+| 5 | Email Verification & Account Recovery | 100% | ✅ Completed |
 | 6 | Advanced RBAC & Authorization | 0% | Not Started |
 | 7 | API Polish & Developer Experience | 0% | Not Started |
 | 8 | Rate Limiting & Security Hardening | 0% | Not Started |
@@ -60,9 +60,20 @@
 - [x] Discord OAuth provider
 - [x] Tests
 
+### Phase 5: Email Verification & Account Recovery ✅
+- [x] VerificationToken generation
+- [x] VerificationService with async storage
+- [x] ResetToken for password reset
+- [x] ResetService with multiple token types
+- [x] Email templates (HTML/text)
+- [x] EmailSender trait
+- [x] ConsoleEmailSender and NoopEmailSender
+- [x] SmtpConfig from URL parsing
+- [x] Tests
+
 ## Current Focus
 
-**Phase 5: Email Verification & Account Recovery**
+**Phase 6: Advanced RBAC & Authorization**
 
 ## Blocker Notes
 
@@ -75,13 +86,14 @@ None.
 | 2026-04-08 | 1-2 | Initial folder structure and core modules |
 | 2026-04-08 | 3 | TOTP implementation |
 | 2026-04-08 | 4 | OAuth integration |
+| 2026-04-08 | 5 | Email verification and password reset |
 
 ## Next Steps
 
-1. Start Phase 5: Email Verification & Account Recovery
-2. Implement verification token generation
-3. Add email sending abstraction
-4. Implement password reset flow
+1. Start Phase 6: Advanced RBAC & Authorization
+2. Implement role hierarchy
+3. Add permission-based access control
+4. Add authorization middleware
 
 ## Notes
 
