@@ -28,19 +28,38 @@ src/
 ├── config.rs            # Configuration
 ├── error.rs             # Error types
 ├── jwt.rs               # JWT operations
-├── macros/              # Procedural macros
-│   └── lib.rs
+├── builders.rs          # Builder patterns (Phase 7)
+├── utils.rs             # Utility functions (Phase 7)
 ├── password/
 │   ├── mod.rs
 │   └── hash.rs
 ├── providers/
 │   ├── mod.rs
 │   └── trait_.rs
+├── authorization/       # RBAC (Phase 6)
+│   ├── mod.rs
+│   ├── roles.rs
+│   ├── permissions.rs
+│   ├── policies.rs
+│   └── audit.rs
 ├── services/
 │   ├── mod.rs
-│   ├── oauth.rs
+│   ├── oauth.rs         # (Phase 4)
 │   ├── session.rs
-│   └── totp.rs          # (Phase 3)
+│   ├── totp.rs         # (Phase 3)
+│   └── email/          # (Phase 5)
+│       ├── mod.rs
+│       ├── verification.rs
+│       ├── reset.rs
+│       ├── templates.rs
+│       └── sender.rs
+├── security/           # Rate limiting (Phase 8)
+│   ├── mod.rs
+│   ├── rate_limiter.rs
+│   ├── headers.rs
+│   ├── detection.rs
+│   ├── cors.rs
+│   └── health.rs
 ├── session/
 │   ├── mod.rs
 │   └── token.rs
@@ -56,6 +75,10 @@ src/
         ├── extractor.rs
         ├── guard.rs
         └── error.rs
+
+rok-auth-macros/        # Procedural macros (Phase 7)
+└── src/
+    └── lib.rs
 
 docs/
 ├── phase-01-core-authentication.md

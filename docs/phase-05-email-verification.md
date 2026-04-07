@@ -25,10 +25,10 @@ Implement email verification and account recovery flows.
 - [x] Email changed notification template
 - [x] HTML/text multipart support
 
-### 5.4 Rate Limiting
-- [ ] Verification email rate limits
-- [ ] Password reset rate limits
-- [ ] Account lockout protection
+### 5.4 Rate Limiting ✅
+- [x] Verification email rate limits
+- [x] Password reset rate limits
+- [x] Account lockout protection
 
 ## File Structure
 
@@ -60,7 +60,7 @@ src/services/email/
 
 - [ ] Not Started
 - [ ] In Progress
-- [x] Completed (Core email services)
+- [x] Completed
 
 ## Implementation Notes
 

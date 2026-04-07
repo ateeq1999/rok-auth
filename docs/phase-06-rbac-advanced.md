@@ -23,10 +23,10 @@ Implement advanced role-based access control and authorization patterns.
 - [x] Failed access attempts tracking
 - [x] Filter-based event retrieval
 
-### 6.4 Web Framework Integration
-- [ ] Axum middleware for authorization
-- [ ] Guard extractors
-- [ ] Route-level protection
+### 6.4 Web Framework Integration ✅
+- [x] Axum middleware for authorization
+- [x] Guard extractors
+- [x] Route-level protection
 
 ## File Structure
 
@@ -58,7 +58,7 @@ src/authorization/
 
 - [ ] Not Started
 - [ ] In Progress
-- [x] Completed (Core authorization implementation)
+- [x] Completed
 
 ## Implementation Notes
 

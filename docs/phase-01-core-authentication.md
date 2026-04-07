@@ -6,27 +6,27 @@ Establish the core JWT authentication infrastructure that will underpin all subs
 
 ## Features
 
-### 1.1 JWT Implementation
-- [ ] Access token signing with configurable algorithm (HS256 default)
-- [ ] Refresh token generation and validation
-- [ ] Token expiration handling
-- [ ] Issuer (iss) and audience (aud) claims support
+### 1.1 JWT Implementation ✅
+- [x] Access token signing with configurable algorithm (HS256 default)
+- [x] Refresh token generation and validation
+- [x] Token expiration handling
+- [x] Issuer (iss) and audience (aud) claims support
 
-### 1.2 Claims Management
-- [ ] Standard JWT claims (sub, exp, iat, iss)
-- [ ] Custom claims for user roles
-- [ ] Role-based claim helpers (has_role, has_any_role, has_all_roles)
-- [ ] Claims serialization/deserialization
+### 1.2 Claims Management ✅
+- [x] Standard JWT claims (sub, exp, iat, iss)
+- [x] Custom claims for user roles
+- [x] Role-based claim helpers (has_role, has_any_role, has_all_roles)
+- [x] Claims serialization/deserialization
 
-### 1.3 Configuration
-- [ ] AuthConfig with secret, TTLs, issuer
-- [ ] Environment-based configuration support
-- [ ] Validation of required fields
+### 1.3 Configuration ✅
+- [x] AuthConfig with secret, TTLs, issuer
+- [x] Environment-based configuration support
+- [x] Validation of required fields
 
-### 1.4 Error Types
-- [ ] AuthError enum with all error variants
-- [ ] User-friendly error messages
-- [ ] Error code mapping
+### 1.4 Error Types ✅
+- [x] AuthError enum with all error variants
+- [x] User-friendly error messages
+- [x] Error code mapping
 
 ## File Structure
 
@@ -56,5 +56,5 @@ src/
 ## Status
 
 - [ ] Not Started
-- [x] In Progress
-- [ ] Completed
+- [ ] In Progress
+- [x] Completed

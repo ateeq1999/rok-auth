@@ -17,15 +17,15 @@ Add time-based one-time password (TOTP) support for enhanced account security.
 - [x] Timing attack prevention (constant-time comparison)
 - [x] Backup codes support
 
-### 3.3 2FA Management
-- [ ] Enable/disable 2FA for users
-- [ ] 2FA setup flow
-- [ ] Recovery codes generation
+### 3.3 2FA Management ✅
+- [x] Enable/disable 2FA for users
+- [x] 2FA setup flow
+- [x] Recovery codes generation
 
-### 3.4 Integration
-- [ ] 2FA requirement checking in auth flows
-- [ ] Remember device functionality
-- [ ] 2FA bypass codes for recovery
+### 3.4 Integration ✅
+- [x] 2FA requirement checking in auth flows
+- [x] Remember device functionality
+- [x] 2FA bypass codes for recovery
 
 ## File Structure
 
@@ -52,7 +52,7 @@ src/services/
 
 - [ ] Not Started
 - [ ] In Progress
-- [x] Completed (Core TOTP implementation)
+- [x] Completed
 
 ## Implementation Notes
 

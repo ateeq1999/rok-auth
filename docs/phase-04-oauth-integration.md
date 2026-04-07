@@ -23,10 +23,10 @@ Implement OAuth 2.0 provider support for social authentication.
 - [x] Discord OAuth
 - [x] Extensible for more providers
 
-### 4.4 Account Linking
-- [ ] Link OAuth accounts to existing users
-- [ ] Auto-registration with OAuth
-- [ ] Multiple providers per user
+### 4.4 Account Linking ✅
+- [x] Link OAuth accounts to existing users
+- [x] Auto-registration with OAuth
+- [x] Multiple providers per user
 
 ## File Structure
 
@@ -54,7 +54,7 @@ src/services/
 
 - [ ] Not Started
 - [ ] In Progress
-- [x] Completed (Core OAuth implementation)
+- [x] Completed
 
 ## Implementation Notes
 
