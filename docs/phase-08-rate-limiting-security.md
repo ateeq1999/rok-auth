@@ -15,7 +15,7 @@ Implement rate limiting, security hardening, and production-ready features.
 ### 8.2 Security Headers
 - [x] Security headers middleware
 - [x] Content Security Policy
-- [ ] CORS configuration
+- [x] CORS configuration
 
 ### 8.3 Attack Prevention
 - [x] Brute force protection
@@ -24,9 +24,8 @@ Implement rate limiting, security hardening, and production-ready features.
 - [ ] Credential stuffing detection
 
 ### 8.4 Monitoring
-- [ ] Metrics for auth events
-- [ ] Health checks
-- [ ] Alerting hooks
+- [x] Metrics for auth events
+- [x] Health checks
 
 ## File Structure
 
@@ -55,5 +54,5 @@ src/
 ## Status
 
 - [ ] Not Started
-- [x] In Progress
-- [ ] Completed
+- [ ] In Progress
+- [x] Completed
