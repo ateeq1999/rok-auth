@@ -16,6 +16,8 @@
 //! - **Two-Factor Authentication** - TOTP support
 //! - **Email Verification** - Account verification flows
 //! - **Web Framework Integration** - First-class Axum support
+//! - **Rate Limiting** - Token bucket and sliding window rate limiting
+//! - **Security Hardening** - Brute force detection, security headers
 //!
 //! ## Quick Start
 //!
@@ -34,6 +36,58 @@
 //! let claims = auth.verify(&token).unwrap();
 //! assert_eq!(claims.sub, "user-123");
 //! assert!(claims.has_role("admin"));
+//! ```
+//!
+//! ## Builder Pattern
+//!
+//! ```rust,no_run
+//! use rok_auth::{Auth, AuthConfigBuilder};
+//!
+//! let auth = Auth::new(
+//!     AuthConfigBuilder::new()
+//!         .secret("my-secret")
+//!         .token_ttl_hours(2)
+//!         .refresh_ttl_days(14)
+//!         .issuer("my-app")
+//!         .build()
+//!         .unwrap()
+//! );
+//! ```
+//!
+//! ## Password Hashing
+//!
+//! ```rust,no_run
+//! use rok_auth::password::{hash_password, verify_password};
+//!
+//! let hash = hash_password("password123").unwrap();
+//! assert!(verify_password("password123", &hash).unwrap());
+//! ```
+//!
+//! ## Rate Limiting
+//!
+//! ```rust,no_run
+//! use rok_auth::security::{RateLimiter, RateLimitConfig};
+//!
+//! # async {
+//! let config = RateLimitConfig {
+//!     requests_per_window: 100,
+//!     window_secs: 60,
+//!     burst_size: 10,
+//! };
+//! let limiter = RateLimiter::new(config);
+//!
+//! let result = limiter.check_ip("192.168.1.1").await;
+//! // Check if request is allowed
+//! # };
+//! ```
+//!
+//! ## Security Headers
+//!
+//! ```rust,no_run
+//! use rok_auth::security::SecurityHeaders;
+//!
+//! let headers = SecurityHeaders::new()
+//!     .strict();
 //! ```
 //!
 //! ## Architecture
@@ -55,6 +109,7 @@
 //! | [`builders`] | Builder patterns for configuration |
 //! | [`utils`] | Utility functions and extensions |
 //! | [`security`] | Rate limiting and security hardening |
+//! | [`authorization`] | RBAC and permissions |
 
 pub mod authorization;
 pub mod builders;
@@ -74,7 +129,7 @@ pub mod web;
 pub use builders::{AuthConfigBuilder, AuthConfigBuilderError};
 pub use claims::{Claims, RefreshClaims};
 pub use config::AuthConfig;
-pub use error::AuthError;
+pub use error::{AuthError, AuthErrorResponse, AuthResult};
 pub use jwt::Auth;
 pub use providers::UserProvider;
 pub use session::SessionToken;

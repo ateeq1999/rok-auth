@@ -8,6 +8,6 @@ pub mod health;
 
 pub use rate_limiter::{RateLimiter, RateLimitConfig, RateLimitResult, MultiRateLimiter};
 pub use headers::SecurityHeaders;
-pub use detection::{BruteForceDetector, SuspiciousActivity, IpReputationChecker};
+pub use detection::{BruteForceDetector, SuspiciousActivity, IpReputationChecker, CredentialStuffingDetector, StuffingResult, StuffingReason};
 pub use cors::CorsConfig;
 pub use health::{HealthStatus, HealthState, HealthCheck, AuthMetrics, MetricsCollector, HealthChecker};

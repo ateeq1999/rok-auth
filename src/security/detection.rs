@@ -1,4 +1,9 @@
 //! Brute force and suspicious activity detection.
+//!
+//! Includes detection for:
+//! - Brute force attacks
+//! - Credential stuffing
+//! - IP reputation tracking
 
 use std::collections::HashMap;
 use std::sync::Arc;
@@ -243,6 +248,122 @@ pub struct IpReputationResult {
     pub flags: Vec<String>,
 }
 
+#[derive(Debug, Clone)]
+pub struct CredentialStuffingDetector {
+    ip_user_pairs: Arc<tokio::sync::RwLock<HashMap<String, Vec<CredentialPair>>>>,
+    ip_password_pairs: Arc<tokio::sync::RwLock<HashMap<String, Vec<String>>>>,
+    max_users_per_ip: usize,
+    max_password_reuse: usize,
+    window: Duration,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+struct CredentialPair {
+    user_id: String,
+    password_hash: String,
+    timestamp: Instant,
+}
+
+impl Default for CredentialStuffingDetector {
+    fn default() -> Self {
+        Self::new(5, 3, Duration::from_secs(3600))
+    }
+}
+
+impl CredentialStuffingDetector {
+    pub fn new(max_users_per_ip: usize, max_password_reuse: usize, window: Duration) -> Self {
+        Self {
+            ip_user_pairs: Arc::new(tokio::sync::RwLock::new(HashMap::new())),
+            ip_password_pairs: Arc::new(tokio::sync::RwLock::new(HashMap::new())),
+            max_users_per_ip,
+            max_password_reuse,
+            window,
+        }
+    }
+
+    pub async fn check_login(&self, ip: &str, user_id: &str, password_hash: &str) -> StuffingResult {
+        let now = Instant::now();
+        let window_start = now - self.window;
+
+        let ip_key = ip.to_string();
+        
+        {
+            let pairs = self.ip_user_pairs.read().await;
+            let user_count = pairs.get(&ip_key)
+                .map(|v| v.iter().filter(|p| p.timestamp > window_start).count())
+                .unwrap_or(0);
+            
+            if user_count >= self.max_users_per_ip {
+                return StuffingResult::Suspicious {
+                    reason: StuffingReason::TooManyUsersPerIp,
+                    score: 50,
+                };
+            }
+        }
+
+        {
+            let passwords = self.ip_password_pairs.read().await;
+            let reuse_count = passwords.get(&ip_key)
+                .map(|v| v.iter().filter(|p| *p == password_hash).count())
+                .unwrap_or(0);
+            
+            if reuse_count >= self.max_password_reuse {
+                return StuffingResult::Suspicious {
+                    reason: StuffingReason::PasswordReuse,
+                    score: 70,
+                };
+            }
+        }
+
+        {
+            let mut pairs = self.ip_user_pairs.write().await;
+            let entry = pairs.entry(ip_key.clone()).or_insert_with(Vec::new);
+            entry.push(CredentialPair {
+                user_id: user_id.to_string(),
+                password_hash: password_hash.to_string(),
+                timestamp: now,
+            });
+            entry.retain(|p| p.timestamp > window_start);
+        }
+
+        {
+            let mut passwords = self.ip_password_pairs.write().await;
+            let entry = passwords.entry(ip_key.clone()).or_insert_with(Vec::new);
+            entry.push(password_hash.to_string());
+            entry.sort();
+            entry.dedup();
+            if entry.len() > self.max_password_reuse {
+                entry.truncate(self.max_password_reuse);
+            }
+        }
+
+        StuffingResult::Allowed
+    }
+
+    pub async fn cleanup(&self) {
+        let now = Instant::now();
+        let window_start = now - self.window;
+
+        let mut pairs = self.ip_user_pairs.write().await;
+        pairs.retain(|_, v| v.iter().any(|p| p.timestamp > window_start));
+
+        let mut passwords = self.ip_password_pairs.write().await;
+        passwords.retain(|_, v| !v.is_empty());
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum StuffingResult {
+    Allowed,
+    Suspicious { reason: StuffingReason, score: u32 },
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum StuffingReason {
+    TooManyUsersPerIp,
+    PasswordReuse,
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -305,5 +426,45 @@ mod tests {
         assert!(result.blocked);
         assert!(result.suspicious);
         assert_eq!(result.score, -150);
+    }
+
+    #[tokio::test]
+    async fn credential_stuffing_allows_normal_logins() {
+        let detector = CredentialStuffingDetector::default();
+        
+        let result = detector.check_login("1.2.3.4", "user1", "hash1").await;
+        assert!(matches!(result, StuffingResult::Allowed));
+        
+        let result = detector.check_login("1.2.3.4", "user2", "hash2").await;
+        assert!(matches!(result, StuffingResult::Allowed));
+    }
+
+    #[tokio::test]
+    async fn credential_stuffing_detects_many_users() {
+        let detector = CredentialStuffingDetector::new(3, 10, Duration::from_secs(3600));
+        
+        for i in 0..5 {
+            let result = detector.check_login("1.2.3.4", &format!("user{}", i), &format!("hash{}", i)).await;
+            if i < 3 {
+                assert!(matches!(result, StuffingResult::Allowed));
+            } else {
+                assert!(matches!(result, StuffingResult::Suspicious { reason: StuffingReason::TooManyUsersPerIp, .. }));
+            }
+        }
+    }
+
+    #[tokio::test]
+    async fn credential_stuffing_tracks_unique_passwords() {
+        let detector = CredentialStuffingDetector::new(3, 5, Duration::from_secs(3600));
+        
+        // Different passwords should all be allowed (within limit)
+        for i in 0..3 {
+            let result = detector.check_login("1.2.3.4", &format!("user{}", i), &format!("hash{}", i)).await;
+            assert!(matches!(result, StuffingResult::Allowed));
+        }
+        
+        // Too many unique passwords from same IP is suspicious
+        let result = detector.check_login("1.2.3.4", "user_extra", "another_hash").await;
+        assert!(matches!(result, StuffingResult::Suspicious { reason: StuffingReason::TooManyUsersPerIp, .. }));
     }
 }

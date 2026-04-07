@@ -21,7 +21,7 @@ Implement rate limiting, security hardening, and production-ready features.
 - [x] Brute force protection
 - [x] Suspicious activity detection
 - [x] IP reputation checker
-- [ ] Credential stuffing detection
+- [x] Credential stuffing detection
 
 ### 8.4 Monitoring
 - [x] Metrics for auth events

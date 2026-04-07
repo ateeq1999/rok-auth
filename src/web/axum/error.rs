@@ -23,6 +23,15 @@ impl IntoResponse for AuthError {
             AuthError::InvalidCredentials => (StatusCode::UNAUTHORIZED, "invalid_credentials"),
             AuthError::HashError(_) => (StatusCode::INTERNAL_SERVER_ERROR, "hash_error"),
             AuthError::Internal(_) => (StatusCode::INTERNAL_SERVER_ERROR, "internal_error"),
+            AuthError::RateLimited => (StatusCode::TOO_MANY_REQUESTS, "rate_limited"),
+            AuthError::AccountLocked(_) => (StatusCode::FORBIDDEN, "account_locked"),
+            AuthError::InvalidTotp => (StatusCode::UNAUTHORIZED, "invalid_totp"),
+            AuthError::UserNotFound => (StatusCode::NOT_FOUND, "user_not_found"),
+            AuthError::EmailExists => (StatusCode::CONFLICT, "email_exists"),
+            AuthError::InvalidVerificationToken => {
+                (StatusCode::BAD_REQUEST, "invalid_verification_token")
+            }
+            AuthError::OAuthError(_) => (StatusCode::BAD_REQUEST, "oauth_error"),
         };
 
         (

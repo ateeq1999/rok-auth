@@ -8,14 +8,14 @@ Polish the API, improve documentation, and enhance developer experience.
 
 ### 7.1 Documentation
 - [x] Comprehensive module documentation
-- [ ] Usage examples for all features
+- [x] Usage examples for all features
 - [ ] API reference documentation
 - [ ] Migration guides
 
 ### 7.2 Procedural Macros
 - [x] #[require_role] attribute macro
 - [x] #[require_any_role] attribute macro
-- [ ] Derive macros for user providers
+- [x] Derive macros for user providers
 
 ### 7.3 Builder Pattern
 - [x] AuthConfig builder
