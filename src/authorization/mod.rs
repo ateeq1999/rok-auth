@@ -1,11 +1,11 @@
 //! Advanced authorization and access control.
 
-mod roles;
+mod audit;
 mod permissions;
 mod policies;
-mod audit;
+mod roles;
 
+pub use audit::{AuditEvent, AuditLevel, AuditLogger};
+pub use permissions::{Permission, PermissionChecker, PermissionSet};
+pub use policies::{AuthorizationResult, Policy, PolicyEvaluator};
 pub use roles::{Role, RoleHierarchy, RoleManager};
-pub use permissions::{Permission, PermissionSet, PermissionChecker};
-pub use policies::{Policy, PolicyEvaluator, AuthorizationResult};
-pub use audit::{AuditLogger, AuditEvent, AuditLevel};

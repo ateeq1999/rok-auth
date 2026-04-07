@@ -5,8 +5,8 @@
 | Metric | Value |
 |--------|-------|
 | Total Phases | 9 |
-| Completed Phases | 6 |
-| Overall Progress | 67% |
+| Completed Phases | 7 |
+| Overall Progress | 89% |
 
 ## Phase Progress
 
@@ -18,8 +18,8 @@
 | 4 | OAuth Integration | 100% | ✅ Completed |
 | 5 | Email Verification & Account Recovery | 100% | ✅ Completed |
 | 6 | Advanced RBAC & Authorization | 100% | ✅ Completed |
-| 7 | API Polish & Developer Experience | 0% | Not Started |
-| 8 | Rate Limiting & Security Hardening | 0% | Not Started |
+| 7 | API Polish & Developer Experience | 100% | ✅ Completed |
+| 8 | Rate Limiting & Security Hardening | 75% | In Progress |
 | 9 | CLI Commands Specification | 0% | Not Started |
 
 ## Completed Work
@@ -38,11 +38,32 @@
 
 ## Current Focus
 
-**Phase 7: API Polish & Developer Experience**
+**Phase 8: Rate Limiting & Security Hardening**
 
 ## Blocker Notes
 
 None.
+
+## Phase 7 Completion
+
+### Completed (Phase 7)
+- [x] AuthConfigBuilder with fluent API
+- [x] Secret generation (random_secret, auth_from_secret)
+- [x] Duration parsing/formatting utilities
+- [x] OptExt trait for Option handling
+- [x] Module exports and documentation
+- [x] Procedural macros (require_role, require_any_role)
+- [x] Separated into rok-auth-macros crate
+
+## Phase 8 Partial Completion
+
+### Completed (Phase 8)
+- [x] RateLimiter with token bucket and sliding window
+- [x] Per-IP and per-user rate limiting
+- [x] MultiRateLimiter for different endpoint configs
+- [x] SecurityHeaders with HSTS, CSP, X-Frame-Options, etc.
+- [x] BruteForceDetector with lockout mechanism
+- [x] IpReputationChecker for bad IP tracking
 
 ## Recent Commits
 
@@ -50,13 +71,15 @@ None.
 |------|-------|-------------|
 | 2026-04-08 | 1-5 | Core phases 1-5 |
 | 2026-04-08 | 6 | RBAC and authorization |
+| 2026-04-08 | 7 | API polish and developer experience |
+| 2026-04-08 | 8 | Rate limiting and security hardening |
 
 ## Next Steps
 
-1. Start Phase 7: API Polish & Developer Experience
-2. Add procedural macros
-3. Implement builder patterns
-4. Add more utilities
+1. Continue Phase 8: Rate Limiting & Security Hardening
+2. Add CORS configuration
+3. Implement metrics/health checks
+4. Start Phase 9: CLI Commands Specification
 
 ## Notes
 

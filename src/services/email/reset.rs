@@ -78,21 +78,36 @@ impl ResetService {
     }
 
     pub async fn create_password_reset(&self, user_id: String, email: String) -> ResetToken {
-        let token = ResetToken::new(user_id, email, self.ttl_minutes, ResetTokenType::PasswordReset);
+        let token = ResetToken::new(
+            user_id,
+            email,
+            self.ttl_minutes,
+            ResetTokenType::PasswordReset,
+        );
         let mut tokens = self.tokens.write().await;
         tokens.push(token.clone());
         token
     }
 
     pub async fn create_email_change(&self, user_id: String, new_email: String) -> ResetToken {
-        let token = ResetToken::new(user_id, new_email, self.ttl_minutes, ResetTokenType::EmailChange);
+        let token = ResetToken::new(
+            user_id,
+            new_email,
+            self.ttl_minutes,
+            ResetTokenType::EmailChange,
+        );
         let mut tokens = self.tokens.write().await;
         tokens.push(token.clone());
         token
     }
 
     pub async fn create_recovery_token(&self, user_id: String, email: String) -> ResetToken {
-        let token = ResetToken::new(user_id, email, self.ttl_minutes, ResetTokenType::AccountRecovery);
+        let token = ResetToken::new(
+            user_id,
+            email,
+            self.ttl_minutes,
+            ResetTokenType::AccountRecovery,
+        );
         let mut tokens = self.tokens.write().await;
         tokens.push(token.clone());
         token
@@ -100,7 +115,7 @@ impl ResetService {
 
     pub async fn verify_and_consume(&self, token_str: &str) -> Result<ResetToken, ResetError> {
         let mut tokens = self.tokens.write().await;
-        
+
         let token = tokens
             .iter_mut()
             .find(|t| t.token == token_str)
@@ -152,8 +167,10 @@ mod tests {
     #[tokio::test]
     async fn create_and_verify_password_reset() {
         let service = ResetService::new(60, 3);
-        let token = service.create_password_reset("user-123".to_string(), "test@example.com".to_string()).await;
-        
+        let token = service
+            .create_password_reset("user-123".to_string(), "test@example.com".to_string())
+            .await;
+
         assert!(!token.token.is_empty());
         assert_eq!(token.token_type, ResetTokenType::PasswordReset);
         assert!(token.is_valid());
@@ -165,19 +182,23 @@ mod tests {
     #[tokio::test]
     async fn token_cannot_be_used_twice() {
         let service = ResetService::new(60, 3);
-        let token = service.create_password_reset("user-123".to_string(), "test@example.com".to_string()).await;
-        
+        let token = service
+            .create_password_reset("user-123".to_string(), "test@example.com".to_string())
+            .await;
+
         service.verify_and_consume(&token.token).await.unwrap();
         let result = service.verify_and_consume(&token.token).await;
-        
+
         assert!(matches!(result, Err(ResetError::TokenAlreadyUsed)));
     }
 
     #[tokio::test]
     async fn expired_token_rejected() {
         let service = ResetService::new(0, 3);
-        let token = service.create_password_reset("user-123".to_string(), "test@example.com".to_string()).await;
-        
+        let token = service
+            .create_password_reset("user-123".to_string(), "test@example.com".to_string())
+            .await;
+
         let result = service.verify_and_consume(&token.token).await;
         assert!(matches!(result, Err(ResetError::TokenExpired)));
     }
@@ -185,14 +206,18 @@ mod tests {
     #[tokio::test]
     async fn invalidate_all_user_tokens() {
         let service = ResetService::new(60, 3);
-        let token1 = service.create_password_reset("user-123".to_string(), "test@example.com".to_string()).await;
-        let token2 = service.create_email_change("user-123".to_string(), "new@example.com".to_string()).await;
-        
+        let token1 = service
+            .create_password_reset("user-123".to_string(), "test@example.com".to_string())
+            .await;
+        let token2 = service
+            .create_email_change("user-123".to_string(), "new@example.com".to_string())
+            .await;
+
         service.invalidate_user_tokens("user-123").await;
-        
+
         let result1 = service.verify_and_consume(&token1.token).await;
         let result2 = service.verify_and_consume(&token2.token).await;
-        
+
         assert!(matches!(result1, Err(ResetError::TokenAlreadyUsed)));
         assert!(matches!(result2, Err(ResetError::TokenAlreadyUsed)));
     }

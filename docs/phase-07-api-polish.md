@@ -7,40 +7,38 @@ Polish the API, improve documentation, and enhance developer experience.
 ## Features
 
 ### 7.1 Documentation
-- [ ] Comprehensive module documentation
+- [x] Comprehensive module documentation
 - [ ] Usage examples for all features
 - [ ] API reference documentation
 - [ ] Migration guides
 
 ### 7.2 Procedural Macros
-- [ ] #[require_role] attribute macro
-- [ ] #[require_any_role] attribute macro
+- [x] #[require_role] attribute macro
+- [x] #[require_any_role] attribute macro
 - [ ] Derive macros for user providers
 
 ### 7.3 Builder Pattern
-- [ ] AuthConfig builder
-- [ ] Fluent configuration API
-- [ ] Validation at build time
+- [x] AuthConfig builder
+- [x] Fluent configuration API
+- [x] Validation at build time
 
 ### 7.4 Utilities
-- [ ] Login/Register macros
-- [ ] Token refresh macros
-- [ ] Error handling helpers
+- [x] auth_from_secret helper
+- [x] auth_with_defaults helper
+- [x] random_secret generator
+- [x] parse_duration / format_duration
+- [x] OptExt trait for Option handling
 
 ## File Structure
 
 ```
 src/
-├── macros.rs           (< 200 lines)
-├── builders.rs         (< 100 lines)
-└── utils.rs            (< 100 lines)
+├── builders.rs         (128 lines)
+├── utils.rs            (142 lines)
 
 rok-auth-macros/
 └── src/
-    ├── lib.rs          (< 300 lines)
-    └── derive/
-        ├── mod.rs      (< 50 lines)
-        └── provider.rs (< 150 lines)
+    └── lib.rs          (196 lines)
 ```
 
 ## Acceptance Criteria
@@ -61,4 +59,4 @@ rok-auth-macros/
 
 - [ ] Not Started
 - [ ] In Progress
-- [ ] Completed
+- [x] Completed

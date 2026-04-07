@@ -7,20 +7,21 @@ Implement rate limiting, security hardening, and production-ready features.
 ## Features
 
 ### 8.1 Rate Limiting
-- [ ] Token bucket algorithm
-- [ ] Sliding window rate limiting
-- [ ] Per-IP and per-user limits
-- [ ] Configurable thresholds
+- [x] Token bucket algorithm
+- [x] Sliding window rate limiting
+- [x] Per-IP and per-user limits
+- [x] Configurable thresholds
 
 ### 8.2 Security Headers
+- [x] Security headers middleware
+- [x] Content Security Policy
 - [ ] CORS configuration
-- [ ] Security headers middleware
-- [ ] Content Security Policy
 
 ### 8.3 Attack Prevention
-- [ ] Brute force protection
+- [x] Brute force protection
+- [x] Suspicious activity detection
+- [x] IP reputation checker
 - [ ] Credential stuffing detection
-- [ ] Suspicious activity detection
 
 ### 8.4 Monitoring
 - [ ] Metrics for auth events
@@ -54,5 +55,5 @@ src/
 ## Status
 
 - [ ] Not Started
-- [ ] In Progress
+- [x] In Progress
 - [ ] Completed

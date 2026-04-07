@@ -2,14 +2,10 @@
 
 use std::marker::PhantomData;
 
-use axum::{
-    extract::FromRequestParts,
-    http::request::Parts,
-    response::Response,
-};
+use axum::{extract::FromRequestParts, http::request::Parts, response::Response};
 
-use crate::AuthError;
 use super::extractor::OptionalClaims;
+use crate::AuthError;
 
 pub trait RoleMarker: Send + Sync + 'static {
     const ROLE: &'static str;

@@ -95,7 +95,11 @@ impl AuditEvent {
         self
     }
 
-    pub fn with_metadata(mut self, key: impl Into<String>, value: impl Into<serde_json::Value>) -> Self {
+    pub fn with_metadata(
+        mut self,
+        key: impl Into<String>,
+        value: impl Into<serde_json::Value>,
+    ) -> Self {
         if let serde_json::Value::Object(ref mut map) = self.metadata {
             map.insert(key.into(), value.into());
         }
@@ -156,7 +160,8 @@ impl InMemoryAuditLogger {
 
     pub async fn get_events(&self, filter: &AuditFilter) -> Vec<AuditEvent> {
         let events = self.events.read().await;
-        events.iter()
+        events
+            .iter()
             .filter(|e| self.matches_filter(e, filter))
             .cloned()
             .collect()
@@ -212,7 +217,8 @@ impl AuditLogger for InMemoryAuditLogger {
 
     fn get_events(&self, filter: &AuditFilter) -> Vec<AuditEvent> {
         let events = self.events.blocking_read();
-        events.iter()
+        events
+            .iter()
             .filter(|e| self.matches_filter(e, filter))
             .cloned()
             .collect()
@@ -257,11 +263,13 @@ mod tests {
     #[tokio::test]
     async fn in_memory_logger() {
         let logger = InMemoryAuditLogger::new(100);
-        
-        logger.log(AuditEvent::new(AuditEventType::Login, AuditResult::Success)
-            .with_user("user-1")).await;
-        logger.log(AuditEvent::new(AuditEventType::Login, AuditResult::Failure)
-            .with_user("user-2")).await;
+
+        logger
+            .log(AuditEvent::new(AuditEventType::Login, AuditResult::Success).with_user("user-1"))
+            .await;
+        logger
+            .log(AuditEvent::new(AuditEventType::Login, AuditResult::Failure).with_user("user-2"))
+            .await;
 
         let events = logger.get_events(&AuditFilter::default()).await;
         assert_eq!(events.len(), 2);

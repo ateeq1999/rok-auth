@@ -62,7 +62,10 @@ impl VerificationService {
         token
     }
 
-    pub async fn verify_token(&self, token_str: &str) -> Result<VerificationToken, VerificationError> {
+    pub async fn verify_token(
+        &self,
+        token_str: &str,
+    ) -> Result<VerificationToken, VerificationError> {
         let mut tokens = self.tokens.write().await;
         let token = tokens
             .iter_mut()
@@ -104,8 +107,10 @@ mod tests {
     #[tokio::test]
     async fn create_and_verify_token() {
         let service = VerificationService::new(24);
-        let token = service.create_token("user-123".to_string(), "test@example.com".to_string()).await;
-        
+        let token = service
+            .create_token("user-123".to_string(), "test@example.com".to_string())
+            .await;
+
         assert!(!token.token.is_empty());
         assert_eq!(token.user_id, "user-123");
         assert!(token.is_valid());
@@ -117,19 +122,23 @@ mod tests {
     #[tokio::test]
     async fn token_cannot_be_used_twice() {
         let service = VerificationService::new(24);
-        let token = service.create_token("user-123".to_string(), "test@example.com".to_string()).await;
-        
+        let token = service
+            .create_token("user-123".to_string(), "test@example.com".to_string())
+            .await;
+
         service.verify_token(&token.token).await.unwrap();
         let result = service.verify_token(&token.token).await;
-        
+
         assert!(matches!(result, Err(VerificationError::TokenAlreadyUsed)));
     }
 
     #[tokio::test]
     async fn expired_token_rejected() {
         let service = VerificationService::new(0);
-        let token = service.create_token("user-123".to_string(), "test@example.com".to_string()).await;
-        
+        let token = service
+            .create_token("user-123".to_string(), "test@example.com".to_string())
+            .await;
+
         let result = service.verify_token(&token.token).await;
         assert!(matches!(result, Err(VerificationError::TokenExpired)));
     }

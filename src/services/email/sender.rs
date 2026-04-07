@@ -14,7 +14,13 @@ pub struct Email {
 }
 
 impl Email {
-    pub fn new(to: Vec<String>, from: String, subject: String, html_body: String, text_body: String) -> Self {
+    pub fn new(
+        to: Vec<String>,
+        from: String,
+        subject: String,
+        html_body: String,
+        text_body: String,
+    ) -> Self {
         Self {
             to,
             cc: Vec::new(),
@@ -57,7 +63,14 @@ pub struct SmtpConfig {
 }
 
 impl SmtpConfig {
-    pub fn new(host: String, port: u16, username: String, password: String, from_email: String, from_name: String) -> Self {
+    pub fn new(
+        host: String,
+        port: u16,
+        username: String,
+        password: String,
+        from_email: String,
+        from_name: String,
+    ) -> Self {
         Self {
             host,
             port,
@@ -71,19 +84,32 @@ impl SmtpConfig {
 
     pub fn from_url(url: &str) -> Result<Self, SendEmailError> {
         let parsed = url::Url::parse(url).map_err(|e| SendEmailError::InvalidUrl(e.to_string()))?;
-        
-        let host = parsed.host_str().ok_or_else(|| SendEmailError::InvalidUrl("no host".to_string()))?.to_string();
+
+        let host = parsed
+            .host_str()
+            .ok_or_else(|| SendEmailError::InvalidUrl("no host".to_string()))?
+            .to_string();
         let port = parsed.port().unwrap_or(587);
         let username = parsed.username().to_string();
         let password = parsed.password().unwrap_or("").to_string();
         let from_email = parsed.username().to_string();
-        
-        Ok(Self::new(host, port, username, password, from_email, "rok-auth".to_string()))
+
+        Ok(Self::new(
+            host,
+            port,
+            username,
+            password,
+            from_email,
+            "rok-auth".to_string(),
+        ))
     }
 }
 
 pub trait EmailSender: Send + Sync {
-    fn send(&self, email: &Email) -> impl std::future::Future<Output = Result<(), SendEmailError>> + Send;
+    fn send(
+        &self,
+        email: &Email,
+    ) -> impl std::future::Future<Output = Result<(), SendEmailError>> + Send;
 }
 
 #[derive(Debug, thiserror::Error)]
@@ -138,7 +164,12 @@ mod tests {
 
     #[test]
     fn simple_email() {
-        let email = Email::simple("test@example.com", "noreply@example.com", "Test", "Hello World");
+        let email = Email::simple(
+            "test@example.com",
+            "noreply@example.com",
+            "Test",
+            "Hello World",
+        );
         assert_eq!(email.to, vec!["test@example.com"]);
         assert_eq!(email.from, "noreply@example.com");
     }

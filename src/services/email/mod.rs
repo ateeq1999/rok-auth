@@ -1,11 +1,13 @@
 //! Email services for verification and password reset.
 
-pub mod verification;
 pub mod reset;
-pub mod templates;
 pub mod sender;
+pub mod templates;
+pub mod verification;
 
-pub use verification::{VerificationToken, VerificationService, VerificationError};
-pub use reset::{ResetToken, ResetService, ResetError, ResetTokenType};
+pub use reset::{ResetError, ResetService, ResetToken, ResetTokenType};
+pub use sender::{
+    ConsoleEmailSender, Email, EmailSender, NoopEmailSender, SendEmailError, SmtpConfig,
+};
 pub use templates::{EmailTemplate, TemplateEngine};
-pub use sender::{Email, SmtpConfig, EmailSender, SendEmailError, ConsoleEmailSender, NoopEmailSender};
+pub use verification::{VerificationError, VerificationService, VerificationToken};

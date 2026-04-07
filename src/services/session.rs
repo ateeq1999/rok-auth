@@ -45,10 +45,7 @@ impl SessionService {
 
     pub async fn get_session(&self, token: &str) -> Result<SessionData, AuthError> {
         let sessions = self.sessions.read().await;
-        sessions
-            .get(token)
-            .cloned()
-            .ok_or(AuthError::InvalidToken)
+        sessions.get(token).cloned().ok_or(AuthError::InvalidToken)
     }
 
     pub async fn delete_session(&self, token: &str) -> Result<(), AuthError> {

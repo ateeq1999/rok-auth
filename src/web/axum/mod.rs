@@ -1,13 +1,13 @@
 //! Axum integration for rok-auth.
 
-mod layer;
+mod error;
 mod extractor;
 mod guard;
-mod error;
+mod layer;
 
-pub use layer::AuthLayer;
+pub use error::AuthErrorResponse;
 pub use extractor::OptionalClaims;
 pub use guard::{RequireRole, RoleMarker};
-pub use error::AuthErrorResponse;
+pub use layer::AuthLayer;
 
 pub type Claims = crate::Claims;

@@ -52,19 +52,26 @@
 //! | [`tokens`] | Token pair management |
 //! | [`web`] | Web framework integrations |
 //! | [`services`] | Built-in authentication services |
+//! | [`builders`] | Builder patterns for configuration |
+//! | [`utils`] | Utility functions and extensions |
+//! | [`security`] | Rate limiting and security hardening |
 
 pub mod authorization;
+pub mod builders;
 pub mod claims;
 pub mod config;
 pub mod error;
 pub mod jwt;
 pub mod password;
 pub mod providers;
+pub mod security;
+pub mod services;
 pub mod session;
 pub mod tokens;
+pub mod utils;
 pub mod web;
-pub mod services;
 
+pub use builders::{AuthConfigBuilder, AuthConfigBuilderError};
 pub use claims::{Claims, RefreshClaims};
 pub use config::AuthConfig;
 pub use error::AuthError;
@@ -72,3 +79,6 @@ pub use jwt::Auth;
 pub use providers::UserProvider;
 pub use session::SessionToken;
 pub use tokens::TokenPair;
+pub use utils::{
+    auth_from_secret, auth_with_defaults, format_duration, parse_duration, random_secret, OptExt,
+};

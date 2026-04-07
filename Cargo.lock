@@ -1591,6 +1591,7 @@ dependencies = [
  "rand",
  "regex",
  "reqwest",
+ "rok-auth-macros",
  "serde",
  "serde_json",
  "sha1 0.4.0",
@@ -1601,6 +1602,15 @@ dependencies = [
  "tower-http",
  "url",
  "uuid",
+]
+
+[[package]]
+name = "rok-auth-macros"
+version = "0.1.0"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.117",
 ]
 
 [[package]]

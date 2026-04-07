@@ -44,7 +44,9 @@ struct RoleArg {
 
 impl Parse for RoleArg {
     fn parse(input: ParseStream) -> syn::Result<Self> {
-        Ok(RoleArg { role: input.parse()? })
+        Ok(RoleArg {
+            role: input.parse()?,
+        })
     }
 }
 
@@ -69,15 +71,21 @@ impl Parse for AnyRoleArgs {
 
 // ── helpers ───────────────────────────────────────────────────────────────────
 
-/// Find the identifier of the first `claims: Claims` parameter in the function
-/// signature so we know which variable to check.
 fn find_claims_ident(func: &ItemFn) -> Option<syn::Ident> {
     for arg in &func.sig.inputs {
-        let FnArg::Typed(pat_type) = arg else { continue };
-        let Pat::Ident(pat_ident) = pat_type.pat.as_ref() else { continue };
-        // Accept any parameter whose type path ends in "Claims"
+        let FnArg::Typed(pat_type) = arg else {
+            continue;
+        };
+        let Pat::Ident(pat_ident) = pat_type.pat.as_ref() else {
+            continue;
+        };
         if let syn::Type::Path(tp) = pat_type.ty.as_ref() {
-            if tp.path.segments.last().map_or(false, |s| s.ident == "Claims") {
+            if tp
+                .path
+                .segments
+                .last()
+                .map_or(false, |s| s.ident == "Claims")
+            {
                 return Some(pat_ident.ident.clone());
             }
         }
@@ -85,7 +93,6 @@ fn find_claims_ident(func: &ItemFn) -> Option<syn::Ident> {
     None
 }
 
-/// Build the forbidden-response expression used by both macros.
 fn forbidden_response(role_display: proc_macro2::TokenStream) -> proc_macro2::TokenStream {
     quote! {
         {
@@ -101,21 +108,10 @@ fn forbidden_response(role_display: proc_macro2::TokenStream) -> proc_macro2::To
     }
 }
 
-// ── shared rewrite helper ─────────────────────────────────────────────────────
-
-/// Rewrites a function so that:
-/// 1. Its return type becomes `::axum::response::Response` (concrete type,
-///    avoids "two different `impl IntoResponse` types" errors).
-/// 2. The guard `if` statement is prepended to the body.
-/// 3. The original body is wrapped so its final value is converted via
-///    `IntoResponse::into_response()`, matching the new return type.
 fn rewrite_fn_with_guard(func: &mut ItemFn, guard: proc_macro2::TokenStream) {
-    // Rewrite return type to the concrete axum Response.
-    func.sig.output = syn::parse2(quote! { -> ::axum::response::Response })
-        .expect("return type parse failed");
+    func.sig.output =
+        syn::parse2(quote! { -> ::axum::response::Response }).expect("return type parse failed");
 
-    // Collect original body statements and wrap their result with
-    // into_response() so the return type matches the new signature.
     let original_stmts = func.block.stmts.drain(..).collect::<Vec<_>>();
 
     *func.block = syn::parse2(quote! {
@@ -127,8 +123,6 @@ fn rewrite_fn_with_guard(func: &mut ItemFn, guard: proc_macro2::TokenStream) {
     })
     .expect("block rewrite failed");
 }
-
-// ── #[require_role("role")] ───────────────────────────────────────────────────
 
 /// Attribute macro that injects a role-check before the handler body.
 ///
@@ -173,8 +167,6 @@ pub fn require_role(attr: TokenStream, item: TokenStream) -> TokenStream {
     quote! { #func }.into()
 }
 
-// ── #[require_any_role("a", "b")] ────────────────────────────────────────────
-
 /// Attribute macro that injects an any-of-roles check before the handler body.
 ///
 /// Returns `403 Forbidden` if the `Claims` parameter does not contain at least
@@ -205,7 +197,11 @@ pub fn require_any_role(attr: TokenStream, item: TokenStream) -> TokenStream {
         }
     };
 
-    let roles_display = roles.iter().map(|r| r.value()).collect::<Vec<_>>().join(" | ");
+    let roles_display = roles
+        .iter()
+        .map(|r| r.value())
+        .collect::<Vec<_>>()
+        .join(" | ");
     let forbidden = forbidden_response(quote! { #roles_display });
 
     let guard = quote! {

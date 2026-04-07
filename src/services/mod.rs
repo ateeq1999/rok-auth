@@ -1,22 +1,20 @@
 //! Built-in authentication services.
 
-mod session;
-mod oauth;
-pub mod totp;
 pub mod email;
+mod oauth;
+mod session;
+pub mod totp;
 
 pub use session::SessionService;
-pub use totp::{TotpService, TotpConfig, TotpCode, TotpError, BackupCodes, BackupCode};
+pub use totp::{BackupCode, BackupCodes, TotpCode, TotpConfig, TotpError, TotpService};
 
 pub use oauth::{
-    OAuthConfig, OAuthError, OAuthProvider, OAuthService, OAuthTokens, OAuthUserInfo,
-    AuthorizationUrl, GoogleProvider, GitHubProvider, DiscordProvider,
+    AuthorizationUrl, DiscordProvider, GitHubProvider, GoogleProvider, OAuthConfig, OAuthError,
+    OAuthProvider, OAuthService, OAuthTokens, OAuthUserInfo,
 };
 
 pub use email::{
-    VerificationToken, VerificationService, VerificationError,
-    ResetToken, ResetService, ResetError, ResetTokenType,
-    EmailTemplate, TemplateEngine,
-    Email, SmtpConfig, EmailSender, SendEmailError,
-    ConsoleEmailSender, NoopEmailSender,
+    ConsoleEmailSender, Email, EmailSender, EmailTemplate, NoopEmailSender, ResetError,
+    ResetService, ResetToken, ResetTokenType, SendEmailError, SmtpConfig, TemplateEngine,
+    VerificationError, VerificationService, VerificationToken,
 };

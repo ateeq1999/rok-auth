@@ -74,7 +74,13 @@ impl PermissionSet {
         self.permissions.iter().any(|p| p.matches(resource, action))
     }
 
-    pub fn can_with_scope(&self, resource: &str, action: &Action, scope: &Scope, user_scope: &Scope) -> bool {
+    pub fn can_with_scope(
+        &self,
+        resource: &str,
+        action: &Action,
+        scope: &Scope,
+        user_scope: &Scope,
+    ) -> bool {
         if !self.can(resource, action) {
             return false;
         }
@@ -116,7 +122,13 @@ impl<P: PermissionProvider> PermissionChecker<P> {
         permissions.can(resource, action)
     }
 
-    pub fn check_with_context(&self, user_id: &str, resource: &str, action: &Action, context: &AuthContext) -> bool {
+    pub fn check_with_context(
+        &self,
+        user_id: &str,
+        resource: &str,
+        action: &Action,
+        context: &AuthContext,
+    ) -> bool {
         let permissions = self.provider.get_permissions(user_id);
         if !permissions.can(resource, action) {
             return false;
@@ -124,11 +136,19 @@ impl<P: PermissionProvider> PermissionChecker<P> {
         self.check_scope(&permissions, resource, context)
     }
 
-    fn check_scope(&self, permissions: &PermissionSet, resource: &str, context: &AuthContext) -> bool {
+    fn check_scope(
+        &self,
+        permissions: &PermissionSet,
+        resource: &str,
+        context: &AuthContext,
+    ) -> bool {
         if let Some(p) = permissions.iter().find(|p| p.resource == resource) {
             match &p.scope {
                 Scope::All => true,
-                Scope::Own => context.owner_id.as_ref().map_or(false, |id| id == &context.user_id),
+                Scope::Own => context
+                    .owner_id
+                    .as_ref()
+                    .map_or(false, |id| id == &context.user_id),
                 Scope::Team => context.team_id.is_some(),
                 Scope::None => false,
             }
@@ -176,7 +196,9 @@ impl AuthContext {
     }
 
     pub fn is_owner(&self) -> bool {
-        self.owner_id.as_ref().map_or(false, |id| id == &self.user_id)
+        self.owner_id
+            .as_ref()
+            .map_or(false, |id| id == &self.user_id)
     }
 }
 
@@ -193,7 +215,9 @@ impl InMemoryPermissionProvider {
 
     pub async fn add_permissions(&self, user_id: &str, permissions: Vec<Permission>) {
         let mut perms = self.permissions.write().await;
-        let set = perms.entry(user_id.to_string()).or_insert_with(PermissionSet::new);
+        let set = perms
+            .entry(user_id.to_string())
+            .or_insert_with(PermissionSet::new);
         for p in permissions {
             set.add(p);
         }

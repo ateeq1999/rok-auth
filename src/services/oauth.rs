@@ -203,10 +203,7 @@ impl DiscordProvider {
                 redirect_uri,
                 auth_url: "https://discord.com/oauth2/authorize".to_string(),
                 token_url: "https://discord.com/api/oauth2/token".to_string(),
-                scopes: vec![
-                    "identify".to_string(),
-                    "email".to_string(),
-                ],
+                scopes: vec!["identify".to_string(), "email".to_string()],
             },
         }
     }
@@ -241,11 +238,7 @@ impl<P: OAuthProvider> OAuthService<P> {
         Ok(AuthorizationUrl { url, state })
     }
 
-    pub async fn exchange_code(
-        &self,
-        code: &str,
-        _state: &str,
-    ) -> Result<OAuthTokens, OAuthError> {
+    pub async fn exchange_code(&self, code: &str, _state: &str) -> Result<OAuthTokens, OAuthError> {
         let config = self.provider.config();
 
         let params = [
@@ -367,7 +360,10 @@ async fn parse_user_info(
                 .await
                 .map_err(|e| OAuthError::UserInfoFailed(e.to_string()))?;
             let picture = user.avatar.map(|avatar_id| {
-                format!("https://cdn.discordapp.com/avatars/{}/{}.png", user.id, avatar_id)
+                format!(
+                    "https://cdn.discordapp.com/avatars/{}/{}.png",
+                    user.id, avatar_id
+                )
             });
             Ok(OAuthUserInfo {
                 id: user.id,
