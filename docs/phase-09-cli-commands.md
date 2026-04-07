@@ -82,4 +82,4 @@ Common flags across all commands:
 
 - [ ] Not Started
 - [ ] In Progress
-- [ ] Completed
+- [x] Completed

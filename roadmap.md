@@ -133,8 +133,8 @@ cargo check --all-features
 | 5 | Email Verification & Account Recovery | Completed | Phase 2 |
 | 6 | Advanced RBAC & Authorization | Completed | Phase 1, 2 |
 | 7 | API Polish & Developer Experience | Completed | Phase 1-6 |
-| 8 | Rate Limiting & Security Hardening | In Progress | Phase 1-7 |
-| 9 | CLI Commands Specification | Not Started | Phase 1-8 |
+| 8 | Rate Limiting & Security Hardening | Completed | Phase 1-7 |
+| 9 | CLI Commands Specification | Completed | Phase 1-8 |
 
 ### Phase Dependencies Graph
 
