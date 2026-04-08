@@ -111,6 +111,20 @@
 //! | [`security`] | Rate limiting and security hardening |
 //! | [`authorization`] | RBAC and permissions |
 
+/// Procedural macros re-exported for convenience.
+///
+/// Users only need to depend on `rok-auth` — there is no need to add
+/// `rok-auth-macros` to `Cargo.toml` separately.
+///
+/// ```rust,ignore
+/// use rok_auth::macros::{require_role, require_any_role, require_all_roles, require_fresh};
+/// // or at the crate root:
+/// use rok_auth::{require_role, require_any_role};
+/// ```
+pub use rok_auth_macros::{
+    require_role, require_any_role, require_all_roles, require_fresh, UserProvider,
+};
+
 pub mod authorization;
 pub mod builders;
 pub mod claims;

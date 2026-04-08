@@ -148,13 +148,37 @@ assert!(!manager.check_role(&user_roles, "invalid"));
 
 ### Role guards via macros
 
+Macros are re-exported from `rok_auth` — no separate dependency needed.
+
 ```rust
-use rok_auth_macros::require_role;
+use rok_auth::{require_role, require_any_role, require_all_roles, require_fresh};
 use rok_auth::Claims;
 
 #[require_role("admin")]
-async fn admin_only(claims: Claims) -> impl IntoResponse {
-    format!("Hello, {}", claims.sub)
+async fn admin_only(claims: Claims) -> impl IntoResponse { "admin" }
+
+#[require_any_role("admin", "moderator")]
+async fn mod_panel(claims: Claims) -> impl IntoResponse { "admin or mod" }
+
+#[require_all_roles("editor", "verified")]
+async fn publish(claims: Claims) -> impl IntoResponse { "has all roles" }
+
+// 403 if the token was issued more than 2 minutes ago
+#[require_fresh(secs = 120)]
+async fn change_password(claims: Claims) -> impl IntoResponse { "fresh token only" }
+```
+
+### `#[derive(UserProvider)]`
+
+```rust
+use rok_auth::UserProvider;
+
+#[derive(UserProvider)]
+struct User {
+    id: String,
+    email: String,           // extra fields are fine
+    password_hash: String,
+    roles: Vec<String>,
 }
 ```
 
