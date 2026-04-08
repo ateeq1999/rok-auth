@@ -137,11 +137,13 @@ pub struct AuditFilter {
     pub result: Option<AuditResult>,
 }
 
+#[allow(dead_code)]
 pub struct InMemoryAuditLogger {
     events: std::sync::Arc<tokio::sync::RwLock<VecDeque<AuditEvent>>>,
     max_events: usize,
 }
 
+#[allow(dead_code)]
 impl InMemoryAuditLogger {
     pub fn new(max_events: usize) -> Self {
         Self {
@@ -225,6 +227,7 @@ impl AuditLogger for InMemoryAuditLogger {
     }
 }
 
+#[allow(dead_code)]
 pub struct ConsoleAuditLogger;
 
 impl AuditLogger for ConsoleAuditLogger {

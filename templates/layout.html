@@ -7,6 +7,13 @@
   <title>{{TITLE}}</title>
   <link rel="stylesheet" href="/public/style.css">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔐</text></svg>">
+  <script>
+    // Apply saved theme before first paint to avoid flash
+    (function() {
+      var t = localStorage.getItem('rok-theme');
+      if (t === 'light') document.documentElement.setAttribute('data-theme', 'light');
+    })();
+  </script>
 </head>
 <body>
   {{NAV}}
@@ -14,5 +21,29 @@
     {{BREADCRUMB}}
     {{CONTENT}}
   </main>
+  <script>
+    function toggleTheme() {
+      var html = document.documentElement;
+      var isLight = html.getAttribute('data-theme') === 'light';
+      if (isLight) {
+        html.removeAttribute('data-theme');
+        localStorage.setItem('rok-theme', 'dark');
+      } else {
+        html.setAttribute('data-theme', 'light');
+        localStorage.setItem('rok-theme', 'light');
+      }
+      updateToggleIcon();
+    }
+
+    function updateToggleIcon() {
+      var btn = document.getElementById('theme-toggle');
+      if (!btn) return;
+      var isLight = document.documentElement.getAttribute('data-theme') === 'light';
+      btn.textContent = isLight ? '☾' : '☀';
+      btn.title = isLight ? 'Switch to dark mode' : 'Switch to light mode';
+    }
+
+    document.addEventListener('DOMContentLoaded', updateToggleIcon);
+  </script>
 </body>
 </html>

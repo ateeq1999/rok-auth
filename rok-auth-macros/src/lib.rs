@@ -47,7 +47,7 @@ use proc_macro2::Span;
 use quote::quote;
 use syn::{
     parse::{Parse, ParseStream},
-    parse_macro_input, Attribute, Data, DeriveInput, Field, FnArg, Ident, ItemFn, LitStr, Pat,
+    parse_macro_input, Data, DeriveInput, FnArg, ItemFn, LitStr, Pat,
     Token,
 };
 

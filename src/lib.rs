@@ -57,10 +57,10 @@
 //! ## Password Hashing
 //!
 //! ```rust,no_run
-//! use rok_auth::password::{hash_password, verify_password};
+//! use rok_auth::password::{hash, verify};
 //!
-//! let hash = hash_password("password123").unwrap();
-//! assert!(verify_password("password123", &hash).unwrap());
+//! let hash = hash("password123").unwrap();
+//! assert!(verify("password123", &hash).unwrap());
 //! ```
 //!
 //! ## Rate Limiting

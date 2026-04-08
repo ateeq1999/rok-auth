@@ -47,14 +47,14 @@ pub struct AuthMetrics {
 #[derive(Clone)]
 pub struct MetricsCollector {
     metrics: Arc<RwLock<AuthMetrics>>,
-    start_time: Instant,
+    _start_time: Instant,
 }
 
 impl MetricsCollector {
     pub fn new() -> Self {
         Self {
             metrics: Arc::new(RwLock::new(AuthMetrics::default())),
-            start_time: Instant::now(),
+            _start_time: Instant::now(),
         }
     }
 

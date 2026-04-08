@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
 
-/* ── Variables ─────────────────────────────────────────────────────────── */
+/* ── Variables — Dark (default) ─────────────────────────────────────── */
 :root {
   --bg:            #060608;
   --bg-2:          #0d0d10;
@@ -24,6 +24,32 @@
   --radius:        8px;
   --radius-lg:     12px;
   --radius-xl:     16px;
+  --theme-icon:    "☀";
+  color-scheme: dark;
+}
+
+/* ── Variables — Light ──────────────────────────────────────────────── */
+[data-theme="light"] {
+  --bg:            #f8f8fc;
+  --bg-2:          #ffffff;
+  --bg-3:          #f0f0f8;
+  --sidebar:       #fafafd;
+  --border:        #e2e2ee;
+  --border-2:      #d0d0e0;
+  --text:          #111118;
+  --text-2:        #44445a;
+  --text-muted:    #8888a8;
+  --accent:        #7c3aed;
+  --accent-2:      #8b5cf6;
+  --accent-3:      #6d28d9;
+  --accent-glow:   rgba(124, 58, 237, 0.07);
+  --accent-border: rgba(124, 58, 237, 0.20);
+  --success:       #059669;
+  --warning:       #d97706;
+  --code-bg:       #f3f3fb;
+  --code-border:   #dcdcee;
+  --theme-icon:    "☾";
+  color-scheme: light;
 }
 
 /* ── Reset ─────────────────────────────────────────────────────────────── */
@@ -308,11 +334,13 @@ body {
   background: none;
   border: none;
   padding: 0;
-  color: #c4b5fd;
+  color: var(--accent-3);
   font-size: 0.875em;
   line-height: 1.72;
   font-weight: 400;
 }
+
+[data-theme="light"] .content pre code { color: #5b21b6; }
 
 /* ── Tables ────────────────────────────────────────────────────────────── */
 .content table {
@@ -345,7 +373,7 @@ body {
 }
 
 .content tr:last-child td { border-bottom: none; }
-.content tbody tr:hover td { background: rgba(255, 255, 255, 0.018); }
+.content tbody tr:hover td { background: rgba(128, 128, 128, 0.04); }
 
 /* ── Blockquote ────────────────────────────────────────────────────────── */
 .content blockquote {
@@ -630,6 +658,30 @@ body {
   background: var(--accent-glow);
   color: var(--accent-3);
   border: 1px solid var(--accent-border);
+}
+
+/* ── Theme toggle ──────────────────────────────────────────────────────── */
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--bg-2);
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.95em;
+  line-height: 1;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+  flex-shrink: 0;
+}
+
+.theme-toggle:hover {
+  color: var(--text-2);
+  border-color: var(--border-2);
+  background: var(--bg-3);
 }
 
 /* ── Responsive ────────────────────────────────────────────────────────── */

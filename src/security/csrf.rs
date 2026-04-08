@@ -5,7 +5,6 @@
 use chrono::{DateTime, Utc};
 use std::collections::HashMap;
 use std::sync::Arc;
-use tokio::sync::RwLock;
 
 pub struct CsrfProtection {
     store: Arc<tokio::sync::Mutex<HashMap<String, DateTime<Utc>>>>,

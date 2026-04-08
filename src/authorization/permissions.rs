@@ -202,10 +202,12 @@ impl AuthContext {
     }
 }
 
+#[allow(dead_code)]
 pub struct InMemoryPermissionProvider {
     permissions: std::sync::Arc<tokio::sync::RwLock<HashMap<String, PermissionSet>>>,
 }
 
+#[allow(dead_code)]
 impl InMemoryPermissionProvider {
     pub fn new() -> Self {
         Self {

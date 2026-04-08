@@ -79,6 +79,7 @@ fn build_nav(items: &[NavItem], active: &str) -> String {
   <div class="nav-footer">
     <a href="/">Home</a>
     <a href="https://github.com/rok/rok-auth" target="_blank">GitHub &#x2197;</a>
+    <button id="theme-toggle" class="theme-toggle" onclick="toggleTheme()" title="Switch to light mode">&#x2600;</button>
   </div>
 </nav>"#,
     );

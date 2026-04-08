@@ -1,6 +1,6 @@
 //! Time-based One-Time Password (TOTP) authentication.
 
-use hmac::{Hmac, Mac};
+use hmac::Hmac;
 use rand::RngCore;
 use serde::{Deserialize, Serialize};
 use std::time::{SystemTime, UNIX_EPOCH};
@@ -83,11 +83,11 @@ impl TotpService {
     }
 
     fn compute_code(&self, secret: &[u8], time_step: u64) -> Result<TotpCode, TotpError> {
-        use digest::KeyInit;
+        use hmac::Mac;
 
         let counter_bytes = time_step.to_be_bytes();
-        let key = generic_array::GenericArray::from_slice(secret);
-        let mut mac = <HmacSha1 as KeyInit>::new(key);
+        let mut mac = HmacSha1::new_from_slice(secret)
+            .map_err(|_| TotpError::ComputationFailed)?;
         mac.update(&counter_bytes);
         let hmac = mac.finalize().into_bytes();
         let offset = (hmac[hmac.len() - 1] & 0x0f) as usize;
