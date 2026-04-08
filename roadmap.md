@@ -90,6 +90,8 @@ docs/
 ├── phase-07-api-polish.md
 ├── phase-08-rate-limiting-security.md
 ├── phase-09-cli-commands.md
+├── phase-10-security-enhancements.md
+├── dev.md
 ├── commands.md
 └── progress.md
 ```
@@ -158,6 +160,7 @@ cargo check --all-features
 | 7 | API Polish & Developer Experience | Completed | Phase 1-6 |
 | 8 | Rate Limiting & Security Hardening | Completed | Phase 1-7 |
 | 9 | CLI Commands Specification | Completed | Phase 1-8 |
+| 10 | Security Enhancements | In Progress | Phase 1-9 |
 
 ### Phase Dependencies Graph
 
@@ -173,6 +176,52 @@ Phase 7 ────────────────┘
 Phase 8 ────────────────┘
                         │
 Phase 9 ────────────────┘
+                        │
+Phase 10 ───────────────┘
+```
+
+---
+
+## Phase 10: Security Enhancements
+
+Inspired by Laravel Sanctum and JWT best practices, this phase adds advanced security features to the authentication library.
+
+### Features
+
+| Feature | Priority | Complexity | Implementation Location |
+|---------|----------|------------|------------------------|
+| Token Abilities/Scopes | High | Low | `src/tokens/abilities.rs` |
+| Token Blacklist | High | Medium | `src/security/blacklist.rs` |
+| Device Tracking | Medium | Medium | `src/security/device.rs` |
+| Strict Algorithm Validation | High | Low | `src/jwt/strict.rs` |
+| CSRF Protection | Medium | Medium | `src/security/csrf.rs` |
+| Step-up Authentication | Medium | Low | `src/security/step_up.rs` |
+| Structured Audit Events | Low | Low | `src/authorization/audit.rs` |
+| Security Webhooks | Low | Medium | `src/security/webhook.rs` |
+
+### Implementation Notes
+
+1. All features should be optional and configurable via feature flags
+2. Default configurations should be secure by default
+3. Database-related features require the database layer integration
+4. Each module should have comprehensive inline tests
+
+### File Structure Additions
+
+```
+src/
+├── tokens/
+│   └── abilities.rs      # Token abilities/scopes (new)
+├── security/
+│   ├── blacklist.rs     # Token revocation (new)
+│   ├── device.rs        # Device tracking (new)
+│   ├── csrf.rs          # CSRF protection (new)
+│   ├── step_up.rs       # Step-up authentication (new)
+│   └── webhook.rs      # Security webhooks (new)
+├── jwt/
+│   └── strict.rs        # Strict algorithm validation (new)
+└── authorization/
+    └── audit.rs         # Enhanced audit events (extend)
 ```
 
 ---

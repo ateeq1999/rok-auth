@@ -681,16 +681,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "hmac-sha1"
-version = "0.2.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6b05da5b9e5d4720bfb691eebb2b9d42da3570745da71eac8a1f5bb7e59aab88"
-dependencies = [
- "hmac",
- "sha1 0.10.6",
-]
-
-[[package]]
 name = "home"
 version = "0.5.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1586,7 +1576,10 @@ dependencies = [
  "axum",
  "base32",
  "chrono",
- "hmac-sha1",
+ "digest",
+ "generic-array",
+ "hex",
+ "hmac",
  "jsonwebtoken",
  "rand",
  "regex",
@@ -1594,7 +1587,7 @@ dependencies = [
  "rok-auth-macros",
  "serde",
  "serde_json",
- "sha1 0.4.0",
+ "sha1",
  "sqlx",
  "thiserror 1.0.69",
  "tokio",
@@ -1800,12 +1793,6 @@ dependencies = [
  "ryu",
  "serde",
 ]
-
-[[package]]
-name = "sha1"
-version = "0.4.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "933ed2cffa70bb0e1a2c1bf1174d0f39dd3b81bbf5597d882d886710c8729924"
 
 [[package]]
 name = "sha1"
@@ -2041,7 +2028,7 @@ dependencies = [
  "rand",
  "rsa",
  "serde",
- "sha1 0.10.6",
+ "sha1",
  "sha2",
  "smallvec",
  "sqlx-core",

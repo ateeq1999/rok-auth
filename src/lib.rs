@@ -117,6 +117,7 @@ pub mod claims;
 pub mod config;
 pub mod error;
 pub mod jwt;
+pub mod jwt_strict;
 pub mod password;
 pub mod providers;
 pub mod security;
@@ -126,14 +127,25 @@ pub mod tokens;
 pub mod utils;
 pub mod web;
 
+pub use authorization::{Permission, Policy, Role};
 pub use builders::{AuthConfigBuilder, AuthConfigBuilderError};
 pub use claims::{Claims, RefreshClaims};
 pub use config::AuthConfig;
 pub use error::{AuthError, AuthErrorResponse, AuthResult};
 pub use jwt::Auth;
+pub use jwt_strict::{StrictValidator, JwtAlgorithmType};
+pub use password::{hash, verify};
 pub use providers::UserProvider;
+pub use security::{
+    BruteForceDetector, CorsConfig, CsrfProtection, Device, DeviceManager, DeviceType,
+    HealthCheck, HealthChecker, HealthState, HealthStatus, IpReputationChecker,
+    MetricsCollector, MultiRateLimiter, RateLimitConfig, RateLimitResult, RateLimiter,
+    SecurityAuditEvent, SecurityEventType, SecurityHeaders, SecurityWebhook, StepUpAuth,
+    StuffingResult, StuffingReason, SuspiciousActivity, TokenBlacklist,
+};
 pub use session::SessionToken;
-pub use tokens::TokenPair;
+pub use services::{email, totp};
+pub use tokens::{TokenAbility, TokenPair, TokenWithAbilities};
 pub use utils::{
     auth_from_secret, auth_with_defaults, format_duration, parse_duration, random_secret, OptExt,
 };
