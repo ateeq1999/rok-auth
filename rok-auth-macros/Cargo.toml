@@ -2,13 +2,21 @@
 name = "rok-auth-macros"
 version = "0.1.0"
 edition = "2021"
+rust-version = "1.75"
 license = "MIT OR Apache-2.0"
-description = "Procedural macros for rok-auth"
+authors = ["Rok Authors"]
+repository = "https://github.com/rok/rok-auth"
+homepage = "https://github.com/rok/rok-auth"
+documentation = "https://docs.rs/rok-auth-macros"
+description = "Procedural macros for rok-auth: #[require_role] and #[require_any_role]"
+keywords = ["auth", "jwt", "rbac", "axum", "macros"]
+categories = ["authentication", "web-programming::http-server"]
+readme = "../README.md"
+
+[lib]
+proc-macro = true
 
 [dependencies]
 proc-macro2 = "1.0"
 quote = "1.0"
-syn = "2.0"
-
-[lib]
-proc-macro = true
+syn = { version = "2.0", features = ["full"] }
