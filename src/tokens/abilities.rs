@@ -15,7 +15,7 @@ pub enum TokenAbility {
 }
 
 impl TokenAbility {
-    pub fn from_str(s: &str) -> Self {
+    pub fn parse(s: &str) -> Self {
         match s.to_lowercase().as_str() {
             "read" => TokenAbility::Read,
             "write" => TokenAbility::Write,
@@ -95,10 +95,10 @@ mod tests {
 
     #[test]
     fn test_token_ability_from_str() {
-        assert_eq!(TokenAbility::from_str("read"), TokenAbility::Read);
-        assert_eq!(TokenAbility::from_str("WRITE"), TokenAbility::Write);
+        assert_eq!(TokenAbility::parse("read"), TokenAbility::Read);
+        assert_eq!(TokenAbility::parse("WRITE"), TokenAbility::Write);
         assert_eq!(
-            TokenAbility::from_str("custom:admin"),
+            TokenAbility::parse("custom:admin"),
             TokenAbility::Custom("custom:admin".to_string())
         );
     }

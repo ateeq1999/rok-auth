@@ -122,7 +122,7 @@
 /// use rok_auth::{require_role, require_any_role};
 /// ```
 pub use rok_auth_macros::{
-    require_role, require_any_role, require_all_roles, require_fresh, UserProvider,
+    require_all_roles, require_any_role, require_fresh, require_role, UserProvider,
 };
 
 pub mod authorization;
@@ -147,18 +147,18 @@ pub use claims::{Claims, RefreshClaims};
 pub use config::AuthConfig;
 pub use error::{AuthError, AuthErrorResponse, AuthResult};
 pub use jwt::Auth;
-pub use jwt_strict::{StrictValidator, JwtAlgorithmType};
+pub use jwt_strict::{JwtAlgorithmType, StrictValidator};
 pub use password::{hash, verify};
 pub use providers::UserProvider;
 pub use security::{
-    BruteForceDetector, CorsConfig, CsrfProtection, Device, DeviceManager, DeviceType,
-    HealthCheck, HealthChecker, HealthState, HealthStatus, IpReputationChecker,
-    MetricsCollector, MultiRateLimiter, RateLimitConfig, RateLimitResult, RateLimiter,
-    SecurityAuditEvent, SecurityEventType, SecurityHeaders, SecurityWebhook, StepUpAuth,
-    StuffingResult, StuffingReason, SuspiciousActivity, TokenBlacklist,
+    BruteForceDetector, CorsConfig, CsrfProtection, Device, DeviceManager, DeviceType, HealthCheck,
+    HealthChecker, HealthState, HealthStatus, IpReputationChecker, MetricsCollector,
+    MultiRateLimiter, RateLimitConfig, RateLimitResult, RateLimiter, SecurityAuditEvent,
+    SecurityEventType, SecurityHeaders, SecurityWebhook, StepUpAuth, StuffingReason,
+    StuffingResult, SuspiciousActivity, TokenBlacklist,
 };
-pub use session::SessionToken;
 pub use services::{email, totp};
+pub use session::SessionToken;
 pub use tokens::{TokenAbility, TokenPair, TokenWithAbilities};
 pub use utils::{
     auth_from_secret, auth_with_defaults, format_duration, parse_duration, random_secret, OptExt,

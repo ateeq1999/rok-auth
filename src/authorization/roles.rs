@@ -84,7 +84,7 @@ impl RoleHierarchy {
         if role == target {
             return true;
         }
-        self.get_ancestors(role).contains(&target.to_string())
+        self.get_ancestors(role).contains(target)
     }
 
     pub fn get_ancestors(&self, role: &str) -> HashSet<String> {

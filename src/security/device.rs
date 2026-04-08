@@ -8,33 +8,37 @@ use std::collections::HashMap;
 use std::sync::Arc;
 use tokio::sync::RwLock;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Default)]
 pub enum DeviceType {
     Web,
     Mobile,
     Desktop,
     Api,
+    #[default]
     Unknown,
 }
 
 impl DeviceType {
     pub fn from_user_agent(ua: &str) -> Self {
         let ua_lower = ua.to_lowercase();
-        if ua_lower.contains("mobile") || ua_lower.contains("android") || ua_lower.contains("iphone") {
+        if ua_lower.contains("mobile")
+            || ua_lower.contains("android")
+            || ua_lower.contains("iphone")
+        {
             DeviceType::Mobile
-        } else if ua_lower.contains("curl") || ua_lower.contains("wget") || ua_lower.contains("postman") {
+        } else if ua_lower.contains("curl")
+            || ua_lower.contains("wget")
+            || ua_lower.contains("postman")
+        {
             DeviceType::Api
-        } else if ua_lower.contains("windows") || ua_lower.contains("mac") || ua_lower.contains("linux") {
+        } else if ua_lower.contains("windows")
+            || ua_lower.contains("mac")
+            || ua_lower.contains("linux")
+        {
             DeviceType::Desktop
         } else {
             DeviceType::Web
         }
-    }
-}
-
-impl Default for DeviceType {
-    fn default() -> Self {
-        DeviceType::Unknown
     }
 }
 
@@ -105,9 +109,7 @@ impl Device {
     }
 
     pub fn is_expired(&self) -> bool {
-        self.expires_at
-            .map(|exp| Utc::now() > exp)
-            .unwrap_or(false)
+        self.expires_at.map(|exp| Utc::now() > exp).unwrap_or(false)
     }
 }
 
@@ -174,8 +176,11 @@ impl DeviceManager {
     }
 
     pub async fn len(&self) -> usize {
-        let devices = self.devices.read().await;
-        devices.len()
+        self.devices.read().await.len()
+    }
+
+    pub async fn is_empty(&self) -> bool {
+        self.devices.read().await.is_empty()
     }
 }
 
@@ -192,8 +197,8 @@ mod tests {
     #[tokio::test]
     async fn test_register_device() {
         let manager = DeviceManager::new();
-        let device = Device::new("user-123".to_string(), DeviceType::Web)
-            .with_name("Chrome on Windows");
+        let device =
+            Device::new("user-123".to_string(), DeviceType::Web).with_name("Chrome on Windows");
 
         let id = manager.register(device).await;
         assert!(!id.is_empty());
@@ -257,9 +262,18 @@ mod tests {
 
     #[test]
     fn test_device_type_from_user_agent() {
-        assert_eq!(DeviceType::from_user_agent("Mozilla/5.0 (iPhone;)"), DeviceType::Mobile);
-        assert_eq!(DeviceType::from_user_agent("Mozilla/5.0 (Windows NT 10.0;)"), DeviceType::Desktop);
-        assert_eq!(DeviceType::from_user_agent("PostmanRuntime/7.28.0"), DeviceType::Api);
+        assert_eq!(
+            DeviceType::from_user_agent("Mozilla/5.0 (iPhone;)"),
+            DeviceType::Mobile
+        );
+        assert_eq!(
+            DeviceType::from_user_agent("Mozilla/5.0 (Windows NT 10.0;)"),
+            DeviceType::Desktop
+        );
+        assert_eq!(
+            DeviceType::from_user_agent("PostmanRuntime/7.28.0"),
+            DeviceType::Api
+        );
         assert_eq!(DeviceType::from_user_agent("Mozilla/5.0"), DeviceType::Web);
     }
 

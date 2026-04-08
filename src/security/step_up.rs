@@ -25,7 +25,7 @@ impl StepUpAuth {
     }
 
     pub fn requires_reauth(&self, issued_at: i64) -> bool {
-        let issued_at_dt = DateTime::from_timestamp(issued_at, 0).unwrap_or_else(|| Utc::now());
+        let issued_at_dt = DateTime::from_timestamp(issued_at, 0).unwrap_or_else(Utc::now);
         Utc::now() - issued_at_dt > self.freshness_duration
     }
 
@@ -55,6 +55,7 @@ impl std::fmt::Debug for StepUpAuth {
 mod tests {
     use super::*;
 
+    #[allow(dead_code)]
     fn make_step_up() -> StepUpAuth {
         StepUpAuth::new()
     }

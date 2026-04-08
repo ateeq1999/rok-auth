@@ -52,8 +52,9 @@ impl TokenBucket {
         let elapsed = now.duration_since(self.last_update);
         self.last_update = now;
 
-        self.tokens = (self.tokens + elapsed.as_secs_f64() * config.requests_per_window as f64
-            / config.window_secs as f64)
+        self.tokens = (self.tokens
+            + elapsed.as_secs_f64() * config.requests_per_window as f64
+                / config.window_secs as f64)
             .min(config.burst_size as f64);
 
         let window_start = now - Duration::from_secs(config.window_secs);
@@ -144,7 +145,8 @@ impl MultiRateLimiter {
     }
 
     pub fn add_limiter(&mut self, name: &str, config: RateLimitConfig) {
-        self.limiters.insert(name.to_string(), RateLimiter::new(config));
+        self.limiters
+            .insert(name.to_string(), RateLimiter::new(config));
     }
 
     pub async fn check(&self, name: &str, key: &str) -> RateLimitResult {

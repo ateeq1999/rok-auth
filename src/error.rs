@@ -91,10 +91,13 @@ pub trait AuthResultExt<T> {
 
 impl<T> AuthResultExt<T> for Result<T, AuthError> {
     fn map_auth_err(self) -> Self {
-        self.map_err(|e| e)
+        self
     }
 
     fn inspect_auth_err(self, f: impl FnOnce(&AuthError)) -> Self {
-        self.inspect_err(f)
+        self.map_err(|e| {
+            f(&e);
+            e
+        })
     }
 }

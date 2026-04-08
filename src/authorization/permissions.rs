@@ -84,15 +84,15 @@ impl PermissionSet {
         if !self.can(resource, action) {
             return false;
         }
-        match (scope, user_scope) {
-            (Scope::All, _) => true,
-            (Scope::Team, Scope::Team) => true,
-            (Scope::Team, Scope::All) => true,
-            (Scope::Own, Scope::Own) => true,
-            (Scope::Own, Scope::Team) => true,
-            (Scope::Own, Scope::All) => true,
-            _ => false,
-        }
+        matches!(
+            (scope, user_scope),
+            (Scope::All, _)
+                | (Scope::Team, Scope::Team)
+                | (Scope::Team, Scope::All)
+                | (Scope::Own, Scope::Own)
+                | (Scope::Own, Scope::Team)
+                | (Scope::Own, Scope::All)
+        )
     }
 
     pub fn iter(&self) -> impl Iterator<Item = &Permission> {
@@ -145,10 +145,7 @@ impl<P: PermissionProvider> PermissionChecker<P> {
         if let Some(p) = permissions.iter().find(|p| p.resource == resource) {
             match &p.scope {
                 Scope::All => true,
-                Scope::Own => context
-                    .owner_id
-                    .as_ref()
-                    .map_or(false, |id| id == &context.user_id),
+                Scope::Own => context.owner_id.as_ref() == Some(&context.user_id),
                 Scope::Team => context.team_id.is_some(),
                 Scope::None => false,
             }
@@ -196,9 +193,7 @@ impl AuthContext {
     }
 
     pub fn is_owner(&self) -> bool {
-        self.owner_id
-            .as_ref()
-            .map_or(false, |id| id == &self.user_id)
+        self.owner_id.as_ref() == Some(&self.user_id)
     }
 }
 

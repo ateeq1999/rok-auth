@@ -86,8 +86,7 @@ impl TotpService {
         use hmac::Mac;
 
         let counter_bytes = time_step.to_be_bytes();
-        let mut mac = HmacSha1::new_from_slice(secret)
-            .map_err(|_| TotpError::ComputationFailed)?;
+        let mut mac = HmacSha1::new_from_slice(secret).map_err(|_| TotpError::ComputationFailed)?;
         mac.update(&counter_bytes);
         let hmac = mac.finalize().into_bytes();
         let offset = (hmac[hmac.len() - 1] & 0x0f) as usize;

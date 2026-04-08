@@ -139,10 +139,7 @@ impl BruteForceDetector {
 
     pub async fn get_failed_attempts(&self, identifier: &str) -> u32 {
         let attempts = self.failed_attempts.read().await;
-        attempts
-            .get(identifier)
-            .map(|s| s.attempts)
-            .unwrap_or(0)
+        attempts.get(identifier).map(|s| s.attempts).unwrap_or(0)
     }
 
     pub async fn unlock(&self, identifier: &str) {
@@ -154,7 +151,7 @@ impl BruteForceDetector {
         let mut attempts = self.failed_attempts.write().await;
         let now = Instant::now();
         attempts.retain(|_, state| {
-            if state.locked_until.map_or(false, |t| now < t) {
+            if state.locked_until.is_some_and(|t| now < t) {
                 return true;
             }
             now.duration_since(state.first_attempt) <= self.detection_window
@@ -281,18 +278,24 @@ impl CredentialStuffingDetector {
         }
     }
 
-    pub async fn check_login(&self, ip: &str, user_id: &str, password_hash: &str) -> StuffingResult {
+    pub async fn check_login(
+        &self,
+        ip: &str,
+        user_id: &str,
+        password_hash: &str,
+    ) -> StuffingResult {
         let now = Instant::now();
         let window_start = now - self.window;
 
         let ip_key = ip.to_string();
-        
+
         {
             let pairs = self.ip_user_pairs.read().await;
-            let user_count = pairs.get(&ip_key)
+            let user_count = pairs
+                .get(&ip_key)
                 .map(|v| v.iter().filter(|p| p.timestamp > window_start).count())
                 .unwrap_or(0);
-            
+
             if user_count >= self.max_users_per_ip {
                 return StuffingResult::Suspicious {
                     reason: StuffingReason::TooManyUsersPerIp,
@@ -303,10 +306,11 @@ impl CredentialStuffingDetector {
 
         {
             let passwords = self.ip_password_pairs.read().await;
-            let reuse_count = passwords.get(&ip_key)
+            let reuse_count = passwords
+                .get(&ip_key)
                 .map(|v| v.iter().filter(|p| *p == password_hash).count())
                 .unwrap_or(0);
-            
+
             if reuse_count >= self.max_password_reuse {
                 return StuffingResult::Suspicious {
                     reason: StuffingReason::PasswordReuse,
@@ -385,7 +389,8 @@ mod tests {
 
     #[tokio::test]
     async fn brute_force_detector_locks_after_max_attempts() {
-        let detector = BruteForceDetector::new(3, Duration::from_secs(60), Duration::from_secs(300));
+        let detector =
+            BruteForceDetector::new(3, Duration::from_secs(60), Duration::from_secs(300));
 
         for _ in 0..3 {
             let _ = detector.record_failed_attempt("test-user").await;
@@ -394,9 +399,7 @@ mod tests {
         let result = detector.record_failed_attempt("test-user").await;
         assert!(matches!(
             result,
-            AttemptResult::Locked {
-                remaining_secs: _
-            }
+            AttemptResult::Locked { remaining_secs: _ }
         ));
     }
 
@@ -418,9 +421,7 @@ mod tests {
     async fn ip_reputation_blocks_bad_ips() {
         let checker = IpReputationChecker::new();
 
-        checker
-            .report_bad_ip("1.2.3.4", -150, "brute_force")
-            .await;
+        checker.report_bad_ip("1.2.3.4", -150, "brute_force").await;
 
         let result = checker.check_ip("1.2.3.4").await;
         assert!(result.blocked);
@@ -431,10 +432,10 @@ mod tests {
     #[tokio::test]
     async fn credential_stuffing_allows_normal_logins() {
         let detector = CredentialStuffingDetector::default();
-        
+
         let result = detector.check_login("1.2.3.4", "user1", "hash1").await;
         assert!(matches!(result, StuffingResult::Allowed));
-        
+
         let result = detector.check_login("1.2.3.4", "user2", "hash2").await;
         assert!(matches!(result, StuffingResult::Allowed));
     }
@@ -442,13 +443,21 @@ mod tests {
     #[tokio::test]
     async fn credential_stuffing_detects_many_users() {
         let detector = CredentialStuffingDetector::new(3, 10, Duration::from_secs(3600));
-        
+
         for i in 0..5 {
-            let result = detector.check_login("1.2.3.4", &format!("user{}", i), &format!("hash{}", i)).await;
+            let result = detector
+                .check_login("1.2.3.4", &format!("user{}", i), &format!("hash{}", i))
+                .await;
             if i < 3 {
                 assert!(matches!(result, StuffingResult::Allowed));
             } else {
-                assert!(matches!(result, StuffingResult::Suspicious { reason: StuffingReason::TooManyUsersPerIp, .. }));
+                assert!(matches!(
+                    result,
+                    StuffingResult::Suspicious {
+                        reason: StuffingReason::TooManyUsersPerIp,
+                        ..
+                    }
+                ));
             }
         }
     }
@@ -456,15 +465,25 @@ mod tests {
     #[tokio::test]
     async fn credential_stuffing_tracks_unique_passwords() {
         let detector = CredentialStuffingDetector::new(3, 5, Duration::from_secs(3600));
-        
+
         // Different passwords should all be allowed (within limit)
         for i in 0..3 {
-            let result = detector.check_login("1.2.3.4", &format!("user{}", i), &format!("hash{}", i)).await;
+            let result = detector
+                .check_login("1.2.3.4", &format!("user{}", i), &format!("hash{}", i))
+                .await;
             assert!(matches!(result, StuffingResult::Allowed));
         }
-        
+
         // Too many unique passwords from same IP is suspicious
-        let result = detector.check_login("1.2.3.4", "user_extra", "another_hash").await;
-        assert!(matches!(result, StuffingResult::Suspicious { reason: StuffingReason::TooManyUsersPerIp, .. }));
+        let result = detector
+            .check_login("1.2.3.4", "user_extra", "another_hash")
+            .await;
+        assert!(matches!(
+            result,
+            StuffingResult::Suspicious {
+                reason: StuffingReason::TooManyUsersPerIp,
+                ..
+            }
+        ));
     }
 }

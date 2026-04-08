@@ -68,8 +68,8 @@ impl SecurityWebhook {
             return Ok(());
         }
 
-        let payload = serde_json::to_vec(event)
-            .map_err(|e| WebhookError::Serialization(e.to_string()))?;
+        let payload =
+            serde_json::to_vec(event).map_err(|e| WebhookError::Serialization(e.to_string()))?;
 
         let signature = compute_signature(&payload, &self.secret);
 
@@ -89,7 +89,7 @@ impl SecurityWebhook {
             .send()
             .await
             .map_err(WebhookError::Http)?;
-        
+
         Ok(())
     }
 
@@ -146,7 +146,7 @@ pub enum WebhookError {
 }
 
 fn compute_signature(payload: &[u8], secret: &str) -> String {
-    use sha1::{Sha1, Digest};
+    use sha1::{Digest, Sha1};
     let mut hasher = Sha1::new();
     hasher.update(secret.as_bytes());
     hasher.update(payload);
@@ -164,7 +164,11 @@ impl SecurityAuditEvent {
             timestamp: Utc::now(),
             success,
             details: serde_json::json!({}),
-            risk_level: if success { RiskLevel::Low } else { RiskLevel::Medium },
+            risk_level: if success {
+                RiskLevel::Low
+            } else {
+                RiskLevel::Medium
+            },
         }
     }
 
@@ -177,11 +181,19 @@ impl SecurityAuditEvent {
             timestamp: Utc::now(),
             success,
             details: serde_json::json!({}),
-            risk_level: if success { RiskLevel::Low } else { RiskLevel::High },
+            risk_level: if success {
+                RiskLevel::Low
+            } else {
+                RiskLevel::High
+            },
         }
     }
 
-    pub fn suspicious_activity(user_id: Option<&str>, ip: Option<&str>, details: serde_json::Value) -> Self {
+    pub fn suspicious_activity(
+        user_id: Option<&str>,
+        ip: Option<&str>,
+        details: serde_json::Value,
+    ) -> Self {
         Self {
             event_type: SecurityEventType::SuspiciousActivity,
             user_id: user_id.map(String::from),
@@ -211,12 +223,16 @@ mod tests {
             "https://example.com/webhook".to_string(),
             "secret".to_string(),
         );
-        
+
         webhook.subscribe(SecurityEventType::Login);
-        assert!(webhook.subscribed_events().contains(&SecurityEventType::Login));
-        
+        assert!(webhook
+            .subscribed_events()
+            .contains(&SecurityEventType::Login));
+
         webhook.unsubscribe(SecurityEventType::Login);
-        assert!(!webhook.subscribed_events().contains(&SecurityEventType::Login));
+        assert!(!webhook
+            .subscribed_events()
+            .contains(&SecurityEventType::Login));
     }
 
     #[test]
@@ -225,9 +241,13 @@ mod tests {
             "https://example.com/webhook".to_string(),
             "secret".to_string(),
         );
-        
-        assert!(webhook.subscribed_events().contains(&SecurityEventType::PasswordChange));
-        assert!(webhook.subscribed_events().contains(&SecurityEventType::MfaEnabled));
+
+        assert!(webhook
+            .subscribed_events()
+            .contains(&SecurityEventType::PasswordChange));
+        assert!(webhook
+            .subscribed_events()
+            .contains(&SecurityEventType::MfaEnabled));
     }
 
     #[test]
@@ -249,7 +269,8 @@ mod tests {
     #[test]
     fn test_security_audit_event_suspicious() {
         let details = serde_json::json!({"reason": "multiple_failed_logins", "attempts": 5});
-        let event = SecurityAuditEvent::suspicious_activity(Some("user-123"), Some("192.168.1.1"), details);
+        let event =
+            SecurityAuditEvent::suspicious_activity(Some("user-123"), Some("192.168.1.1"), details);
         assert_eq!(event.event_type, SecurityEventType::SuspiciousActivity);
         assert_eq!(event.risk_level, RiskLevel::High);
     }

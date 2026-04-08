@@ -29,7 +29,7 @@ impl JwtAlgorithmType {
         }
     }
 
-    pub fn from_str(s: &str) -> Option<Self> {
+    pub fn parse(s: &str) -> Option<Self> {
         match s.to_uppercase().as_str() {
             "HS256" => Some(JwtAlgorithmType::HS256),
             "HS384" => Some(JwtAlgorithmType::HS384),
@@ -161,6 +161,7 @@ fn base64_decode(input: &str) -> Vec<u8> {
 mod tests {
     use super::*;
 
+    #[allow(dead_code)]
     fn make_validator() -> StrictValidator {
         StrictValidator::new()
     }
@@ -168,14 +169,14 @@ mod tests {
     #[test]
     fn test_algorithm_from_str() {
         assert_eq!(
-            JwtAlgorithmType::from_str("HS256"),
+            JwtAlgorithmType::parse("HS256"),
             Some(JwtAlgorithmType::HS256)
         );
         assert_eq!(
-            JwtAlgorithmType::from_str("hs256"),
+            JwtAlgorithmType::parse("hs256"),
             Some(JwtAlgorithmType::HS256)
         );
-        assert_eq!(JwtAlgorithmType::from_str("invalid"), None);
+        assert_eq!(JwtAlgorithmType::parse("invalid"), None);
     }
 
     #[test]

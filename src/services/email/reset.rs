@@ -58,7 +58,7 @@ fn generate_secure_token() -> String {
     let mut bytes = [0u8; 48];
     rand::thread_rng().fill_bytes(&mut bytes);
     let hex: String = bytes.iter().map(|b| format!("{:02x}", b)).collect();
-    format!("{}_{}", hex[..32].to_string(), hex[32..].to_string())
+    format!("{}_{}", &hex[..32], &hex[32..])
 }
 
 pub struct ResetService {

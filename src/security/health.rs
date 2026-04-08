@@ -111,7 +111,8 @@ impl Default for MetricsCollector {
     }
 }
 
-type HealthCheckFn = dyn Fn() -> Pin<Box<dyn std::future::Future<Output = HealthCheck> + Send>> + Send + Sync;
+type HealthCheckFn =
+    dyn Fn() -> Pin<Box<dyn std::future::Future<Output = HealthCheck> + Send>> + Send + Sync;
 
 pub struct HealthChecker {
     checks: HashMap<String, Box<HealthCheckFn>>,
@@ -131,7 +132,9 @@ impl HealthChecker {
     {
         self.checks.insert(
             name.to_string(),
-            Box::new(move || Box::pin(check()) as Pin<Box<dyn std::future::Future<Output = HealthCheck> + Send>>),
+            Box::new(move || {
+                Box::pin(check()) as Pin<Box<dyn std::future::Future<Output = HealthCheck> + Send>>
+            }),
         );
     }
 
@@ -139,7 +142,7 @@ impl HealthChecker {
         let mut checks = Vec::new();
         let mut overall_state = HealthState::Healthy;
 
-        for (_name, check_fn) in &self.checks {
+        for check_fn in self.checks.values() {
             let result = check_fn().await;
             if result.status != HealthState::Healthy && overall_state == HealthState::Healthy {
                 overall_state = result.status;
@@ -184,11 +187,11 @@ mod tests {
     #[tokio::test]
     async fn metrics_collector_increments() {
         let collector = MetricsCollector::new();
-        
+
         collector.record_request().await;
         collector.record_request().await;
         collector.record_successful_auth().await;
-        
+
         let metrics = collector.get_metrics().await;
         assert_eq!(metrics.total_requests, 2);
         assert_eq!(metrics.successful_auths, 1);
@@ -197,11 +200,11 @@ mod tests {
     #[tokio::test]
     async fn metrics_collector_sessions() {
         let collector = MetricsCollector::new();
-        
+
         collector.record_session_created().await;
         collector.record_session_created().await;
         collector.record_session_revoked().await;
-        
+
         let metrics = collector.get_metrics().await;
         assert_eq!(metrics.active_sessions, 1);
     }
@@ -217,7 +220,7 @@ mod tests {
                 message: None,
             }
         });
-        
+
         let status = checker.check_all().await;
         assert_eq!(status.status, HealthState::Healthy);
         assert_eq!(status.checks.len(), 1);

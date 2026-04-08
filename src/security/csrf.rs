@@ -26,7 +26,7 @@ impl CsrfProtection {
 
     pub async fn generate(&self, session_id: &str) -> String {
         use base32::Alphabet;
-        
+
         let alphabet = Alphabet::Rfc4648 { padding: false };
         let data1 = rand::random::<[u8; 16]>();
         let data2 = rand::random::<[u8; 16]>();
@@ -62,8 +62,11 @@ impl CsrfProtection {
     }
 
     pub async fn len(&self) -> usize {
-        let store = self.store.lock().await;
-        store.len()
+        self.store.lock().await.len()
+    }
+
+    pub async fn is_empty(&self) -> bool {
+        self.store.lock().await.is_empty()
     }
 }
 
@@ -89,7 +92,7 @@ mod tests {
     async fn test_generate_token() {
         let csrf = CsrfProtection::new();
         let token = csrf.generate("session-123").await;
-        
+
         assert!(!token.is_empty());
         assert!(token.contains('.'));
     }
@@ -126,13 +129,13 @@ mod tests {
     async fn test_cleanup() {
         let csrf = CsrfProtection::new().with_ttl(1);
         let session = "session-123";
-        
+
         csrf.generate(session).await;
         assert!(csrf.len().await > 0);
 
         tokio::time::sleep(tokio::time::Duration::from_secs(2)).await;
         csrf.cleanup().await;
-        
+
         assert!(csrf.len().await == 0);
     }
 }
