@@ -1,68 +1,116 @@
 # Phase 2: User Authentication Flows
 
-## Overview
+Password hashing with Argon2id and cryptographically secure session tokens.
 
-Implement user authentication flows including registration, login, and session management.
+---
 
-## Features
+## Password Hashing
 
-### 2.1 Password Handling ✅
-- [x] Argon2id password hashing
-- [x] Password verification
-- [x] Async variants for non-blocking operations
-- [x] Secure random salt generation
+Defined in [src/password/hash.rs](../src/password/hash.rs). Uses **Argon2id** with a random salt per hash.
 
-### 2.2 User Provider Trait ✅
-- [x] UserProvider trait definition
-- [x] find_by_email implementation
-- [x] User ID, password hash, roles accessors
-- [x] Integration with user models
+### Sync API
 
-### 2.3 Token Management ✅
-- [x] TokenPair for access/refresh token pairs
-- [x] Refresh token rotation
-- [x] Token exchange functionality
-- [x] Session token generation
+```rust
+use rok_auth::password::{hash, verify};
 
-### 2.4 Session Management ✅
-- [x] Cryptographically secure session tokens
-- [x] Session storage interface
-- [x] Session validation
+let hash_str = hash("correct-horse-battery-staple")?;
 
-## File Structure
+let ok = verify("correct-horse-battery-staple", &hash_str)?;
+assert!(ok);
 
-```
-src/
-├── password/
-│   ├── mod.rs      (< 20 lines)
-│   └── hash.rs     (< 80 lines)
-├── session/
-│   ├── mod.rs      (< 20 lines)
-│   └── token.rs    (< 60 lines)
-├── tokens/
-│   ├── mod.rs      (< 20 lines)
-│   ├── pair.rs     (< 20 lines)
-│   └── refresh.rs  (< 40 lines)
-├── providers/
-│   ├── mod.rs      (< 20 lines)
-│   └── trait_.rs   (< 40 lines)
+let bad = verify("wrong-password", &hash_str)?;
+assert!(!bad);
 ```
 
-## Acceptance Criteria
+Each call to `hash` produces a different output — the salt is embedded in the PHC string.
 
-1. Passwords are hashed with Argon2id
-2. UserProvider trait integrates with any user model
-3. Token pairs are generated correctly
-4. Session tokens are cryptographically secure
-5. All tests pass
+### Async API
 
-## Dependencies
+Argon2id is CPU-intensive. Use the non-blocking wrappers in async contexts:
 
-- argon2
-- rand
+```rust
+use rok_auth::password::{hash_async, verify_async};
 
-## Status
+let hash_str = hash_async("my-password".to_string()).await?;
+let ok = verify_async("my-password".to_string(), hash_str).await?;
+```
 
-- [ ] Not Started
-- [ ] In Progress
-- [x] Completed
+Both use `tokio::task::spawn_blocking` so they never block the async executor.
+
+### Public re-exports
+
+`rok_auth::hash` and `rok_auth::verify` are re-exported at the crate root for convenience.
+
+### Errors
+
+Returns `Err(AuthError::HashError(msg))` on failure. Only happens on system entropy exhaustion — extremely rare.
+
+---
+
+## SessionToken
+
+Defined in [src/session/token.rs](../src/session/token.rs). A 256-bit opaque token for session cookies or database-backed sessions.
+
+```rust
+use rok_auth::SessionToken;
+
+// Generate a new random token (32 bytes -> 64-char hex string)
+let token = SessionToken::generate();
+println!("{}", token); // "a3f8b1..."
+
+// Wrap an existing value loaded from storage
+let token = SessionToken::wrap("existing-token-value");
+
+// Access raw string
+let s: &str = token.as_str();
+```
+
+`SessionToken` implements `Display`, `PartialEq`, `Eq`, and `Hash` — usable as a map key.
+
+---
+
+## UserProvider Trait
+
+Defined in [src/providers/trait_.rs](../src/providers/trait_.rs). An async trait your application implements to connect rok-auth to your user store. rok-auth does not ship a built-in persistence layer.
+
+```rust
+use rok_auth::UserProvider;
+
+struct MyDb { /* pool */ }
+
+impl UserProvider for MyDb {
+    type User = MyUser;
+
+    async fn find_by_id(&self, id: &str) -> Option<Self::User> { todo!() }
+    async fn find_by_email(&self, email: &str) -> Option<Self::User> { todo!() }
+}
+```
+
+---
+
+## Typical Login Flow
+
+```rust
+use rok_auth::{Auth, AuthError, Claims};
+use rok_auth::password::verify_async;
+
+async fn login(
+    auth: &Auth,
+    password_input: &str,
+    stored_hash: &str,
+    user_id: &str,
+    roles: Vec<String>,
+) -> Result<(String, String), AuthError> {
+    // 1. Verify password (non-blocking)
+    let ok = verify_async(password_input.to_string(), stored_hash.to_string()).await?;
+    if !ok {
+        return Err(AuthError::InvalidCredentials);
+    }
+
+    // 2. Issue access + refresh tokens
+    let access = auth.sign(&Claims::new(user_id, roles))?;
+    let refresh = auth.sign_refresh(user_id)?;
+
+    Ok((access, refresh))
+}
+```

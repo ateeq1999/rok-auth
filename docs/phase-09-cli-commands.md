@@ -1,85 +1,108 @@
-# Phase 9: CLI Commands Specification
+# Phase 9: CLI Commands
 
-## Overview
+The `rok-auth` binary provides a developer CLI for key management, token operations, and diagnostics. A full `rok-cli` crate (standalone tool) is planned but deferred.
 
-Define CLI commands for the rok-cli crate that interact with rok-auth.
+See [commands.md](commands.md) for the complete command reference.
 
-## Commands
+---
 
-### 9.1 Key Management
-
-```bash
-rok-cli key generate [--algorithm <algo>] [--output <path>]
-rok-cli key rotate --current <path> --new <path>
-```
-
-### 9.2 Token Operations
+## Running the CLI
 
 ```bash
-rok-cli token sign --sub <subject> [--roles <roles>] [--ttl <duration>]
-rok-cli token verify --token <token>
-rok-cli token decode --token <token>
-rok-cli token refresh --refresh-token <token>
+cargo run --bin rok-auth -- <command> [options]
 ```
 
-### 9.3 User Management
+Or after building:
 
 ```bash
-rok-cli user create --email <email> --password <password> [--roles <roles>]
-rok-cli user verify --email <email>
-rok-cli user reset-password --email <email>
-rok-cli user disable --user-id <id>
-rok-cli user list [--page <n>] [--limit <n>]
+./target/debug/rok-auth <command> [options]
 ```
 
-### 9.4 Session Management
+---
 
-```bash
-rok-cli session list --user-id <id>
-rok-cli session revoke --session-id <id>
-rok-cli session revoke-all --user-id <id>
-```
+## Command Categories
 
-### 9.5 OAuth Management
+| Category | Commands |
+|----------|----------|
+| Key management | `key generate`, `key rotate`, `key list` |
+| Token operations | `token sign`, `token verify`, `token decode`, `token refresh` |
+| User management | `user create`, `user verify`, `user reset-password`, `user disable`, `user list` |
+| Session management | `session list`, `session revoke`, `session revoke-all` |
+| OAuth management | `oauth list-providers`, `oauth add`, `oauth remove`, `oauth link` |
+| Diagnostics | `audit list`, `stats auth`, `health check` |
 
-```bash
-rok-cli oauth list-providers
-rok-cli oauth add --provider <name> --config <json>
-rok-cli oauth remove --provider <name>
-rok-cli oauth link --user-id <id> --provider <name>
-```
-
-### 9.6 Audit & Monitoring
-
-```bash
-rok-cli audit list [--user-id <id>] [--from <date>] [--to <date>]
-rok-cli stats auth --period <duration>
-rok-cli health check
-```
+---
 
 ## JSON Payload Format
 
-All commands support JSON payload input:
+All commands that accept input support a `--json` flag:
 
 ```bash
-rok-cli <command> --json-payload '{
-  "sub": "user-123",
-  "roles": ["admin", "user"],
-  "ttl": "1h"
-}'
+rok-auth token sign --json '{"sub": "user-123", "roles": ["admin"]}'
+rok-auth user create --json '{"email": "alice@example.com", "password": "hunter2"}'
 ```
 
-## Flags
+---
 
-Common flags across all commands:
-- `--json-payload <json>`: JSON input (agent-friendly)
-- `--output-format <format>`: Output format (json, table, yaml)
-- `--quiet`: Suppress output
-- `--verbose`: Verbose logging
-- `--config <path>`: Config file path
+## Key Management
 
-## Status
+```bash
+# Generate a new signing key
+rok-auth key generate --output ./keys/signing.key
 
-- [ ] Not Started
-- [ ] In Progress
-- [x] Completed
+# Rotate the active key (keeps old key for verification)
+rok-auth key rotate --config ./rok-auth.toml
+
+# List all keys and their status
+rok-auth key list
+```
+
+---
+
+## Token Operations
+
+```bash
+# Sign a token
+rok-auth token sign --sub user-123 --roles admin,user
+
+# Verify a token (exits 0 if valid, 1 if invalid)
+rok-auth token verify --token "eyJ..."
+
+# Decode without verifying (inspect claims)
+rok-auth token decode --token "eyJ..."
+
+# Exchange a refresh token for a new pair
+rok-auth token refresh --token "eyJ..."
+```
+
+---
+
+## User Management
+
+```bash
+rok-auth user create --email alice@example.com --password hunter2 --roles user
+rok-auth user verify --email alice@example.com
+rok-auth user reset-password --email alice@example.com
+rok-auth user disable --id user-123
+rok-auth user list --role admin
+```
+
+---
+
+## Session Management
+
+```bash
+rok-auth session list --user user-123
+rok-auth session revoke --session-id sess-abc123
+rok-auth session revoke-all --user user-123
+```
+
+---
+
+## Diagnostics
+
+```bash
+rok-auth health check          # component health status
+rok-auth stats auth            # login metrics
+rok-auth audit list --days 7   # recent audit events
+```

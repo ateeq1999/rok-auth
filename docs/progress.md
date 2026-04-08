@@ -1,103 +1,98 @@
 # Implementation Progress
 
-## Overall Progress
+## Status: Complete
 
-| Metric | Value |
-|--------|-------|
-| Total Phases | 9 |
-| Completed Phases | 8 |
-| Overall Progress | 100% |
+All 10 phases implemented. 79+ tests passing.
 
-## Phase Progress
+---
 
-| Phase | Title | Progress | Status |
-|-------|-------|----------|--------|
-| 1 | Core Authentication Foundation | 100% | ✅ Completed |
-| 2 | User Authentication Flows | 100% | ✅ Completed |
-| 3 | Two-Factor Authentication (TOTP) | 100% | ✅ Completed |
-| 4 | OAuth Integration | 100% | ✅ Completed |
-| 5 | Email Verification & Account Recovery | 100% | ✅ Completed |
-| 6 | Advanced RBAC & Authorization | 100% | ✅ Completed |
-| 7 | API Polish & Developer Experience | 100% | ✅ Completed |
-| 8 | Rate Limiting & Security Hardening | 100% | ✅ Completed |
-| 9 | CLI Commands Specification | 100% | ✅ Completed |
+## Phase Summary
 
-## Completed Work
+| Phase | Title | Status |
+|-------|-------|--------|
+| 1 | Core Authentication Foundation | Complete |
+| 2 | User Authentication Flows | Complete |
+| 3 | Two-Factor Authentication (TOTP) | Complete |
+| 4 | OAuth Integration | Complete |
+| 5 | Email Verification & Account Recovery | Complete |
+| 6 | Advanced RBAC & Authorization | Complete |
+| 7 | API Polish & Developer Experience | Complete |
+| 8 | Rate Limiting & Security Hardening | Complete |
+| 9 | CLI Commands Specification | Complete |
+| 10 | Security Enhancements | Complete |
 
-### Phase 1-5: (See previous progress.md)
+---
 
-### Phase 6: Advanced RBAC & Authorization ✅
-- [x] Role hierarchy with inheritance
-- [x] RoleManager with default roles (superadmin, admin, moderator, user, guest)
-- [x] Permission system (Read, Write, Delete, Manage, Execute)
-- [x] Scope-based permissions (Own, Team, All)
-- [x] Policy evaluator with condition support
-- [x] Audit logging with event filtering
-- [x] InMemoryPermissionProvider and InMemoryAuditLogger
-- [x] Tests
+## What Was Built
 
-## Current Focus
+### Phase 1 — Core Authentication
+- `Auth` struct with JWT sign/verify/exchange
+- `AuthConfig` with secret, TTLs, issuer
+- `Claims` with role helper methods (`has_role`, `has_any_role`, `has_all_roles`)
+- `RefreshClaims` with `typ: "refresh"` discriminator
+- `AuthError` with typed variants and HTTP status mapping
 
-**Project Complete!**
+### Phase 2 — User Authentication
+- Argon2id password hashing (`hash`, `verify`, `hash_async`, `verify_async`)
+- `SessionToken` — 256-bit random hex tokens
+- `UserProvider` trait for pluggable user stores
 
-## Blocker Notes
+### Phase 3 — Two-Factor Authentication
+- `TotpService` — RFC 6238 TOTP with configurable digits/period/algorithm
+- `BackupCodes` — one-time recovery codes with constant-time verification
+- `provisioning_uri` for QR code generation
 
-None.
+### Phase 4 — OAuth Integration
+- `OAuthService` with authorization URL and code exchange
+- Built-in providers: Google, GitHub, Discord
+- `OAuthProvider` trait for custom providers
 
-## Phase 7 Completion
+### Phase 5 — Email Verification
+- `VerificationService` — email verification tokens
+- `ResetService` — password reset tokens
+- `EmailSender` trait with `ConsoleEmailSender` and `NoopEmailSender`
+- `TemplateEngine` for HTML/plain-text email templates
 
-### Completed (Phase 7)
-- [x] AuthConfigBuilder with fluent API
-- [x] Secret generation (random_secret, auth_from_secret)
-- [x] Duration parsing/formatting utilities
-- [x] OptExt trait for Option handling
-- [x] Module exports and documentation
-- [x] Procedural macros (require_role, require_any_role)
-- [x] Separated into rok-auth-macros crate
+### Phase 6 — Advanced RBAC
+- `Role`, `RoleHierarchy`, `RoleManager` with inheritance
+- Built-in hierarchy: superadmin ← admin ← moderator ← user, guest
+- `Permission` enum with `Read/Write/Delete/Manage/Execute`
+- `PermissionScope` enum with `Own/Team/All`
+- `Policy`, `PolicyEvaluator`
+- `AuditLogger` trait with `AuditEvent`, `AuditFilter`
 
-## Phase 8 Completion
+### Phase 7 — API Polish
+- `AuthConfigBuilder` fluent builder
+- `auth_from_secret`, `auth_with_defaults`, `random_secret`
+- `parse_duration`, `format_duration` (supports `s/m/h/d/w` suffixes)
+- `OptExt` trait for `Option` → `AuthError` conversion
+- `#[require_role]` and `#[require_any_role]` procedural macros (in `rok-auth-macros`)
 
-### Completed (Phase 8)
-- [x] RateLimiter with token bucket and sliding window
-- [x] Per-IP and per-user rate limiting
-- [x] MultiRateLimiter for different endpoint configs
-- [x] SecurityHeaders with HSTS, CSP, X-Frame-Options, etc.
-- [x] CorsConfig with multiple presets
-- [x] BruteForceDetector with lockout mechanism
-- [x] IpReputationChecker for bad IP tracking
-- [x] MetricsCollector for auth event tracking
-- [x] HealthChecker for health status monitoring
+### Phase 8 — Rate Limiting & Security
+- `RateLimiter` — token bucket + sliding window, keyed by IP/user/endpoint
+- `MultiRateLimiter` — different configs per named endpoint
+- `BruteForceDetector` — failed attempt tracking with configurable lockout
+- `IpReputationChecker` — score-based IP blocking
+- `CredentialStuffingDetector` — detects many users or password reuse per IP
+- `SecurityHeaders` — HSTS, CSP, X-Frame-Options, etc. with `.strict()` and `.permissive()` presets
+- `CorsConfig` — CORS presets
+- `CsrfProtection` — CSRF token generation and validation
+- `StepUpAuth` — freshness-based re-authentication guard
+- `DeviceManager` — per-user device/session tracking
+- `HealthChecker`, `MetricsCollector`
+- `SecurityWebhook` — HMAC-signed event notifications
+- `TokenBlacklist` — in-memory JWT revocation
+- `StrictValidator` — algorithm enforcement (prevents `alg: none` attacks)
 
-## Phase 9 Completion
+### Phase 9 — CLI
+- CLI command specification in `docs/commands.md`
+- Binary entry point at `src/main.rs`
+- Covers: key, token, user, session, oauth, audit, stats, health commands
 
-### Completed (Phase 9)
-- [x] CLI Commands documented in docs/commands.md
-- [x] Key management commands (generate, rotate, list)
-- [x] Token operations (sign, verify, decode, refresh)
-- [x] User management (create, verify, reset-password, disable, list)
-- [x] Session management (list, revoke, revoke-all)
-- [x] OAuth management (list-providers, add, remove, link)
-- [x] Audit and monitoring (audit list, stats auth, health check)
+---
 
-## Recent Commits
+## Deferred Work
 
-| Date | Phase | Description |
-|------|-------|-------------|
-| 2026-04-08 | 1-5 | Core phases 1-5 |
-| 2026-04-08 | 6 | RBAC and authorization |
-| 2026-04-08 | 7 | API polish and developer experience |
-| 2026-04-08 | 8 | Rate limiting and security hardening |
-| 2026-04-08 | 9 | CLI commands specification |
-
-## Next Steps
-
-1. CLI implementation in separate `rok-cli` crate (deferred)
-2. Project complete! 🎉
-
-## Notes
-
-- All code files must be under 400 lines
-- Single Cargo.toml at root (no workspace)
-- CLI deferred to `rok-cli` crate
-- Each phase should be committed separately
-- Update this file after each phase completion
+- `rok-cli` standalone crate (full CLI implementation)
+- Database-backed persistence (currently all in-memory)
+- `rok-auth-macros` expansion to more complex guards
